@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">eReader</string>
+    <string name="nav_header_title">eReader</string>
+
+    <string name="menu_account">Account</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_bookstore">Bookstore</string>
+    <string name="menu_collection">Collection</string>
+    <string name="title_item_detail">Item Detail</string>
 </resources>
