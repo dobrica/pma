@@ -1,11 +1,32 @@
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools" xmlns:android="http://schemas.android.com/apk/res/android">
 
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorPrimary">@color/primary</item>
+        <item name="colorPrimaryDark">@color/primary</item>
+        <item name="colorAccent">@color/darkText</item>
+        <item name="android:windowBackground">@color/background</item>
+        <item name="android:textColor">@drawable/text_selector</item>
+        <item name="titleTextColor">@color/accent</item>
+        <item name="android:textColorPrimary">@color/lightText</item>
+        <item name="android:textColorSecondary">@color/darkText</item>
+        <item name="android:itemBackground">@drawable/menu_item_selector</item>
+    </style>
+
+    <style name="NavHeaderStyle" parent="AppTheme">
+        <item name="android:background">@color/primary</item>
+        <item name="android:textColor">@color/accent</item>
+    </style>
+
+    <style name="ToolbarMenuItemsStyle" parent="AppTheme">
+        <item name="android:textColorPrimary">@color/darkText</item>
+        <item name="android:textColorSecondary">@color/accent</item>
+    </style>
+
+    <style name="FloatingActionButtonStyle" parent="AppTheme">
+        <item name="android:tint">@color/primary</item>
+        <item name="colorAccent">@color/accent</item>
     </style>
 
     <style name="AppTheme.NoActionBar">

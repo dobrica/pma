@@ -18,15 +18,15 @@
             android:title="@string/menu_bookstore" />
         <item
             android:id="@+id/nav_collection1"
-            android:icon="@drawable/ic_chevron_right_black"
+            android:icon="@drawable/ic_chevron_right_accent"
             android:title="Collection 1" />
         <item
             android:id="@+id/nav_collection2"
-            android:icon="@drawable/ic_chevron_right_black"
+            android:icon="@drawable/ic_chevron_right_accent"
             android:title="Collection 2" />
         <item
             android:id="@+id/nav_collection3"
-            android:icon="@drawable/ic_chevron_right_black"
+            android:icon="@drawable/ic_chevron_right_accent"
             android:title="Collection 3" />
     </group>
 
