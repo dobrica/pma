@@ -2,6 +2,7 @@
 <resources>
     <color name="lightText">#A2B589</color>
     <color name="darkText">#91C653</color>
+    <color name="secondAccent">#75AA38</color>
     <color name="accent">#E91E63</color>
     <color name="primary">#1A0E20</color>
     <color name="background">#25142F</color>
