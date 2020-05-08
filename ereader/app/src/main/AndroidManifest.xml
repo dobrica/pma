@@ -28,6 +28,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.pma.ereader.MainActivity" />
         </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:label="Login"
+            android:noHistory="true"
+            android:excludeFromRecents="true">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.pma.ereader.MainActivity" />
+        </activity>
     </application>
 
 </manifest>
