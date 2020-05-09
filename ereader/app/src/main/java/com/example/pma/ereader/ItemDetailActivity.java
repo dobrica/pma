@@ -9,9 +9,9 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
-import com.example.pma.ereader.ui.*;
+import com.example.pma.ereader.ui.ItemDetailFragment;
+import com.example.pma.ereader.ui.ListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.snackbar.Snackbar;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -32,8 +32,8 @@ public class ItemDetailActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own detail action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
+                Intent intent = new Intent(ItemDetailActivity.this, ReadingActivity.class);
+                startActivity(intent);
             }
         });
 

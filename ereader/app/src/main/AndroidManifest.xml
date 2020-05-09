@@ -10,6 +10,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <activity android:name=".ReadingActivity"></activity>
         <activity
             android:name=".MainActivity"
             android:label="@string/app_name"
@@ -31,9 +32,9 @@
         </activity>
         <activity
             android:name=".LoginActivity"
+            android:excludeFromRecents="true"
             android:label="Login"
             android:noHistory="true"
-            android:excludeFromRecents="true"
             android:screenOrientation="portrait"
             tools:ignore="LockedOrientationActivity">
             <meta-data

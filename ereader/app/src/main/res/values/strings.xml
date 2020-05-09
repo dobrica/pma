@@ -19,4 +19,5 @@
     <string name="login_failed">"Login failed"</string>
     <string name="action_sign_out">Sign out</string>
     <string name="action_sign_up_here">Sign up here!</string>
+    <string name="reading_screen">Reading screen</string>
 </resources>
