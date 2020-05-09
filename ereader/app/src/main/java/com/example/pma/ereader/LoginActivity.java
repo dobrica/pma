@@ -1,11 +1,5 @@
 package com.example.pma.ereader;
 
-import com.example.pma.ereader.ui.login.LoggedInUserView;
-import com.example.pma.ereader.ui.login.LoginFormState;
-import com.example.pma.ereader.ui.login.LoginResult;
-import com.example.pma.ereader.ui.login.LoginViewModel;
-import com.example.pma.ereader.ui.login.LoginViewModelFactory;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -23,12 +17,18 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelProviders;
+
+import com.example.pma.ereader.ui.login.LoggedInUserView;
+import com.example.pma.ereader.ui.login.LoginFormState;
+import com.example.pma.ereader.ui.login.LoginResult;
+import com.example.pma.ereader.ui.login.LoginViewModel;
+import com.example.pma.ereader.ui.login.LoginViewModelFactory;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -138,5 +138,11 @@ public class LoginActivity extends AppCompatActivity {
 
 	private void showLoginFailed(@StringRes Integer errorString) {
 		Toast.makeText(getApplicationContext(), errorString, Toast.LENGTH_SHORT).show();
+	}
+
+	@Override
+	public void onBackPressed() {
+		finishAffinity();
+		finish();
 	}
 }
