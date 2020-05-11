@@ -46,8 +46,10 @@ public class LoginActivity extends AppCompatActivity {
 		loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory()).get(LoginViewModel.class);
 
 		final EditText usernameEditText = findViewById(R.id.username);
-		final EditText passwordEditText = findViewById(R.id.password);
+		final EditText passwordEditText = findViewById(R.id.reg_password);
 		final Button loginButton = findViewById(R.id.login);
+		final Button registerButton = findViewById(R.id.register);
+		registerButton.setEnabled(true);
 		final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
 		loginViewModel.getLoginFormState().observe(this, new Observer<LoginFormState>() {
@@ -130,6 +132,14 @@ public class LoginActivity extends AppCompatActivity {
 					passwordEditText.getText().toString());
 			}
 		});
+		registerButton.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
+				startActivity(intent);
+			}
+		});
+
 	}
 
 	private void updateUiWithUser(LoggedInUserView model) {
