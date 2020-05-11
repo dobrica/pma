@@ -1,15 +1,12 @@
 package com.example.pma.ereader;
 
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
-import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.snackbar.Snackbar;
-
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -17,6 +14,10 @@ import androidx.navigation.NavController;
 import androidx.navigation.Navigation;
 import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
 		// menu should be considered as top level destinations.
 		mAppBarConfiguration = new AppBarConfiguration.Builder(
 			R.id.nav_account, R.id.nav_settings, R.id.nav_bookstore,
-			R.id.nav_collection1, R.id.nav_collection2, R.id.nav_collection3)
+				R.id.nav_all_books, R.id.nav_favourites, R.id.nav_to_read, R.id.nav_have_read, R.id.nav_new_collection)
 			.setDrawerLayout(drawer)
 			.build();
 		NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);

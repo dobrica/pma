@@ -24,21 +24,32 @@
         tools:layout="@layout/fragment_bookstore" />
 
     <fragment
-        android:id="@+id/nav_collection1"
+        android:id="@+id/nav_favourites"
         android:name="com.example.pma.ereader.ui.collection.CollectionFragment"
         android:label="@string/menu_collection"
         tools:layout="@layout/fragment_collection" />
 
     <fragment
-        android:id="@+id/nav_collection2"
+        android:id="@+id/nav_to_read"
         android:name="com.example.pma.ereader.ui.collection.CollectionFragment"
         android:label="@string/menu_collection"
         tools:layout="@layout/fragment_collection" />
 
     <fragment
-        android:id="@+id/nav_collection3"
+        android:id="@+id/nav_have_read"
         android:name="com.example.pma.ereader.ui.collection.CollectionFragment"
         android:label="@string/menu_collection"
         tools:layout="@layout/fragment_collection" />
+
+    <fragment
+        android:id="@+id/nav_all_books"
+        android:name="com.example.pma.ereader.ui.collection.CollectionFragment"
+        android:label="@string/menu_collection"
+        tools:layout="@layout/fragment_collection" />
+
+    <dialog
+        android:id="@+id/nav_new_collection"
+        android:name="com.example.pma.ereader.ui.NewCollectionDialog"
+        tools:layout="@layout/dialog_new_collection"/>
 
 </navigation>
