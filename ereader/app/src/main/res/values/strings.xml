@@ -25,7 +25,6 @@
     <string name="registration_failed">"Registration failed"</string>
     <string name="action_sign_out">Sign out</string>
     <string name="action_sign_up_here">Sign up</string>
-    <string name="reading_screen">Reading screen</string>
     <string name="new_collection">New collection</string>
     <string name="collections">Collections</string>
     <string name="all_books">All books</string>
@@ -38,4 +37,12 @@
     <string name="account_user_id">USER ID: %1$s</string>
     <string name="account_username">USERNAME: %1$s</string>
     <string name="account_name">NAME: %1$s</string>
+
+    <string name="reading_screen">
+        Lorem ipsum dolor sit amet, sumo voluptatum conclusionemque vel at, minim conceptam cu nec. Ex iisque consulatu vix, mea eirmod timeam an, eius intellegat has at. Te debitis convenire delicatissimi vis, et fugit assueverit duo. Libris legendos adipiscing no vis. Has ea eligendi torquatos, vel vide doming ex. Sea te stet fabulas appellantur.
+        An munere appareat sadipscing quo, sed partiendo appellantur ex. Ad duo dico insolens, mei no dicant munere, alia debet ubique ut usu. Voluptua appetere argumentum ius ne. Tota fugit dicit duo ne, docendi alienum constituto an usu. Id sed idque simul utamur, an duo falli partiendo iracundia.
+        Ne quodsi audire quo, ex est rebum mucius. Nulla nostrud patrioque eam ut, et per quodsi adipisci expetenda. Omnesque similique mel ea, duo in paulo expetenda, ne sea commune repudiandae. Nominati indoctum id sit, an elit eripuit has, ei mazim corrumpit expetendis per. In mel eros postulant, vivendum tincidunt an duo.
+        Inani ubique perpetua eu sed, eu nec sint perpetua. Usu tollit fierent facilisis et. Zril labore mel ne, quidam philosophia et his. Cu erant consul graeco nec, at ius invidunt vivendum.
+        Cu prompta bonorum molestie has, eu vix euismod honestatis quaerendum. Detracto necessitatibus et eos. Vis ea ludus insolens platonem, eros sonet vel at. Cum an partem ubique luptatum. Nisl assueverit qui eu. Sea aperiri moderatius scribentur ad, vim minimum principes ex.
+    </string>
 </resources>
