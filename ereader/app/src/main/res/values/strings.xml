@@ -20,4 +20,13 @@
     <string name="action_sign_out">Sign out</string>
     <string name="action_sign_up_here">Sign up here!</string>
     <string name="reading_screen">Reading screen</string>
+    <string name="new_collection">New collection</string>
+    <string name="collections">Collections</string>
+    <string name="all_books">All books</string>
+    <string name="favourites">Favourites</string>
+    <string name="to_read">To read</string>
+    <string name="have_read">Have read</string>
+    <string name="enter_collection_name_hint">Enter collection name...</string>
+    <string name="ok">Ok</string>
+    <string name="cancel">Cancel</string>
 </resources>

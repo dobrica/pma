@@ -1,0 +1,58 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="350dp"
+    android:layout_height="200dp"
+    android:background="@color/background">
+
+    <FrameLayout
+        android:layout_width="300dp"
+        android:layout_height="150dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginStart="25dp"
+        android:layout_marginEnd="25dp"
+        android:layout_marginBottom="5dp"
+        tools:ignore="UselessParent">
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="@string/new_collection"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <EditText
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:backgroundTint="@color/lightText"
+            android:hint="@string/enter_collection_name_hint"
+            android:inputType="text"
+            android:textSize="18sp"
+            android:selectAllOnFocus="true"
+            android:textColorHint="@color/lightText"
+            android:textColor="@color/darkText"
+            android:importantForAutofill="no" />
+
+        <Button
+            android:id="@+id/btnNewCollectionOk"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_gravity="bottom|end"
+            android:layout_width="50sp"
+            android:layout_height="wrap_content"
+            android:text="@string/ok"
+            android:theme="@style/DialogLinkButtonStyle"
+            android:stateListAnimator="@null"/>
+
+        <Button
+            android:id="@+id/btnNewCollectionCancel"
+            android:layout_marginBottom="5dp"
+            android:layout_marginEnd="60sp"
+            android:layout_gravity="bottom|end"
+            android:layout_width="80sp"
+            android:layout_height="wrap_content"
+            android:text="@string/cancel"
+            android:theme="@style/DialogLinkButtonStyle"
+            android:stateListAnimator="@null"/>
+    </FrameLayout>
+
+</FrameLayout>
