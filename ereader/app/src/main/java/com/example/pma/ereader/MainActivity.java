@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
 
 	private void checkLogInState() {
 		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MainActivity.this);
-		if (!sharedPref.getBoolean("UserLoggedIn", false)) {
+		if (sharedPref.getString("UserLoggedIn", "").isEmpty()) {
 			Intent intent = new Intent(MainActivity.this, LoginActivity.class);
 			startActivity(intent);
 		}

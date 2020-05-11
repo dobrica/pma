@@ -80,10 +80,6 @@ public class LoginActivity extends AppCompatActivity {
 				}
 				if (loginResult.getSuccess() != null) {
 					updateUiWithUser(loginResult.getSuccess());
-					final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-					SharedPreferences.Editor editor = sharedPref.edit();
-					editor.putBoolean("UserLoggedIn", true);
-					editor.apply();
 				}
 				setResult(Activity.RESULT_OK);
 				Intent intent = new Intent(LoginActivity.this, MainActivity.class);

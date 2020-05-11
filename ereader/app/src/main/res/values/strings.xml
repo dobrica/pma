@@ -35,4 +35,7 @@
     <string name="enter_collection_name_hint">Enter collection name...</string>
     <string name="ok">Ok</string>
     <string name="cancel">Cancel</string>
+    <string name="account_user_id">USER ID: %1$s</string>
+    <string name="account_username">USERNAME: %1$s</string>
+    <string name="account_name">NAME: %1$s</string>
 </resources>
