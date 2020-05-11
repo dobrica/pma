@@ -24,13 +24,27 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.example.pma.ereader.model.register.RegisterDataSource;
+import com.example.pma.ereader.model.register.RegisteredUser;
 import com.example.pma.ereader.ui.login.LoggedInUserView;
 import com.example.pma.ereader.ui.login.LoginFormState;
 import com.example.pma.ereader.ui.login.LoginResult;
 import com.example.pma.ereader.ui.login.LoginViewModel;
 import com.example.pma.ereader.ui.login.LoginViewModelFactory;
+import com.google.gson.Gson;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class LoginActivity extends AppCompatActivity {
+
+	public static List<RegisteredUser> PREDEFINED_USERS = Arrays.asList(RegisteredUser.builder().fullName("User1").userName("user@one.com").build(),
+		RegisteredUser.builder().fullName("User2").userName("user@two.com").build(),
+		RegisteredUser.builder().fullName("User3").userName("user@three.com").build());
 
 	private LoginViewModel loginViewModel;
 
@@ -41,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getSupportActionBar().hide();
-
+		prepareDummyUsers();
 		setContentView(R.layout.activity_login);
 		loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory()).get(LoginViewModel.class);
 
@@ -150,5 +164,19 @@ public class LoginActivity extends AppCompatActivity {
 	public void onBackPressed() {
 		finishAffinity();
 		finish();
+	}
+
+	public void prepareDummyUsers() {
+		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
+		if(sharedPref.getStringSet("Users", Collections.<String>emptySet()).isEmpty()) {
+			final Set<String> users = new HashSet<>();
+			Gson gson = new Gson();
+			for(RegisteredUser registeredUser: PREDEFINED_USERS) {
+				users.add(gson.toJson(registeredUser));
+			}
+			SharedPreferences.Editor editor = sharedPref.edit();
+			editor.putStringSet("Users", users);
+			editor.apply();
+		}
 	}
 }

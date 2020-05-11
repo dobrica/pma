@@ -22,7 +22,7 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="invalid_password_match">Passwords must match</string>
     <string name="login_failed">"Login failed"</string>
-    <string name="registration_failed">"Login failed"</string>
+    <string name="registration_failed">"Registration failed"</string>
     <string name="action_sign_out">Sign out</string>
     <string name="action_sign_up_here">Sign up</string>
     <string name="reading_screen">Reading screen</string>
