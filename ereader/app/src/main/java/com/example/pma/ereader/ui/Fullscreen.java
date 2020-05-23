@@ -3,6 +3,8 @@ package com.example.pma.ereader.ui;
 import android.annotation.SuppressLint;
 import android.os.Handler;
 import android.view.View;
+import android.view.WindowManager;
+import android.view.animation.TranslateAnimation;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
@@ -15,7 +17,7 @@ public class Fullscreen extends AppCompatActivity {
      * Some older devices needs a small delay between UI widget updates
      * and a change of the status and navigation bar.
      */
-    private static final int UI_ANIMATION_DELAY = 300;
+    private static final int UI_ANIMATION_DELAY = 450;
     private final Handler mHideHandler = new Handler();
     private final Runnable mHidePart2Runnable = new Runnable() {
         @SuppressLint("InlinedApi")
@@ -28,9 +30,8 @@ public class Fullscreen extends AppCompatActivity {
             // at compile-time and do nothing on earlier devices.
             mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LOW_PROFILE
                     | View.SYSTEM_UI_FLAG_FULLSCREEN
-                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
                     | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                    | View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
                     | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION);
         }
     };
@@ -59,10 +60,13 @@ public class Fullscreen extends AppCompatActivity {
 
     protected void hide() {
         // Hide UI first
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                WindowManager.LayoutParams.FLAG_FULLSCREEN);
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.hide();
         }
+
         if (fab != null) {
             fab.hide();
         }
@@ -76,17 +80,38 @@ public class Fullscreen extends AppCompatActivity {
     @SuppressLint("InlinedApi")
     protected void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN |
+                View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR);
         mVisible = true;
 
         if (fab != null) {
             fab.show();
         }
+    }
 
-        // Schedule a runnable to display UI elements after a delay
-        mHideHandler.removeCallbacks(mHidePart2Runnable);
-        mHideHandler.postDelayed(mShowPart2Runnable, UI_ANIMATION_DELAY);
+    public void slideTopViewOffScreen(View view) {
+        animateViewSlide(view, 0, -view.getHeight());
+    }
+
+    public void slideTopViewBackToScreen(View view) {
+        animateViewSlide(view, -view.getHeight(), 0);
+    }
+
+    public void slideBottomViewOffScreen(View view) {
+        animateViewSlide(view, 0, view.getHeight());
+    }
+
+    public void slideBottomViewBackToScreen(View view) {
+        animateViewSlide(view, view.getHeight(), 0);
+    }
+
+    private void animateViewSlide(View view, int fromYDelta, int toYDelta) {
+        TranslateAnimation animate = new TranslateAnimation(
+                0, 0,
+                fromYDelta, toYDelta);
+        animate.setDuration(400);
+        animate.setFillAfter(true);
+        view.startAnimation(animate);
     }
 
 }
