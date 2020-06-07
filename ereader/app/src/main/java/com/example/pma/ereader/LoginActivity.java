@@ -42,7 +42,8 @@ import java.util.Set;
 
 public class LoginActivity extends AppCompatActivity {
 
-	public static List<RegisteredUser> PREDEFINED_USERS = Arrays.asList(RegisteredUser.builder().fullName("User1").userName("user@one.com").build(),
+	public static List<RegisteredUser> PREDEFINED_USERS = Arrays.asList(
+		RegisteredUser.builder().fullName("User1").userName("user@one.com").build(),
 		RegisteredUser.builder().fullName("User2").userName("user@two.com").build(),
 		RegisteredUser.builder().fullName("User3").userName("user@three.com").build());
 
