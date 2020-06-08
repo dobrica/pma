@@ -46,4 +46,14 @@
         Cu prompta bonorum molestie has, eu vix euismod honestatis quaerendum. Detracto necessitatibus et eos. Vis ea ludus insolens platonem, eros sonet vel at. Cum an partem ubique luptatum. Nisl assueverit qui eu. Sea aperiri moderatius scribentur ad, vim minimum principes ex.
     </string>
     <string name="action_content">Content</string>
+    <string name="pref_sync">pref_sync</string>
+    <string name="pref_sync_summ">Allow app to sync data automatically, when wifi is avalible</string>
+    <string name="pref_sync_title">Allow Sync</string>
+    <string name="notifications">Notifications</string>
+    <string name="notify_on_key">notify</string>
+    <string name="notify_on_summ">Send you notifications on app that you have created after sync</string>
+    <string name="notif_on_my_app">On my app</string>
+    <string name="notif_on_sync_key">notif_on_sync</string>
+    <string name="notif_on_sync_summ">Send you notifications about sync</string>
+    <string name="notif_on_sync_title">Sync notifications</string>
 </resources>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <PreferenceCategory
+        android:title="Auto data sync"
+        android:key="sync_settings">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_sync"
+            android:summary="@string/pref_sync_summ"
+            android:title="@string/pref_sync_title" />
+
+    </PreferenceCategory>
+
+
+    <PreferenceCategory
+        android:title="@string/notifications"
+        android:key="notif_settings">
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/notify_on_key"
+            android:summary="@string/notify_on_summ"
+            android:title="@string/notif_on_my_app" />
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/notif_on_sync_key"
+            android:summary="@string/notif_on_sync_summ"
+            android:title="@string/notif_on_sync_title" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>
