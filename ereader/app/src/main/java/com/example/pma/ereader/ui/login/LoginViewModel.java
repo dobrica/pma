@@ -2,7 +2,6 @@ package com.example.pma.ereader.ui.login;
 
 import com.example.pma.ereader.model.login.LoggedInUser;
 import com.example.pma.ereader.model.login.LoginRepository;
-import com.example.pma.ereader.model.login.Result;
 import com.example.pma.ereader.R;
 import android.util.Patterns;
 import androidx.lifecycle.LiveData;
@@ -29,11 +28,10 @@ public class LoginViewModel extends ViewModel {
 
 	public void login(String username, String password) {
 		// can be launched in a separate asynchronous job
-		Result<LoggedInUser> result = loginRepository.login(username, password);
+		LoggedInUser result = loginRepository.login(username, password);
 
-		if (result instanceof Result.Success) {
-			LoggedInUser data = ((Result.Success<LoggedInUser>) result).getData();
-			loginResult.setValue(new LoginResult(new LoggedInUserView(data.getDisplayName())));
+		if (result != null) {
+			loginResult.setValue(new LoginResult(new LoggedInUserView(result.getDisplayName())));
 		} else {
 			loginResult.setValue(new LoginResult(R.string.login_failed));
 		}
