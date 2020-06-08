@@ -13,6 +13,10 @@ import com.example.pma.ereader.ui.ItemDetailFragment;
 import com.example.pma.ereader.ui.ListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
 /**
  * An activity representing a single Item detail screen. This
  * activity is only used on narrow width devices. On tablet-size devices,
@@ -25,7 +29,7 @@ public class ItemDetailActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
@@ -33,6 +37,8 @@ public class ItemDetailActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(ItemDetailActivity.this, ReadingActivity.class);
+                String filePath = getFileFromAssets("pg33504-images.epub").getAbsolutePath();
+                intent.putExtra("filePath", filePath);
                 startActivity(intent);
             }
         });
@@ -64,6 +70,28 @@ public class ItemDetailActivity extends AppCompatActivity {
                     .add(R.id.item_detail_container, fragment)
                     .commit();
         }
+    }
+
+    public File getFileFromAssets(String fileName) {
+
+        File file = new File(getCacheDir() + "/" + fileName);
+
+        if (!file.exists()) try {
+
+            InputStream is = getAssets().open(fileName);
+            int size = is.available();
+            byte[] buffer = new byte[size];
+            is.read(buffer);
+            is.close();
+
+            FileOutputStream fos = new FileOutputStream(file);
+            fos.write(buffer);
+            fos.close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return file;
     }
 
     @Override
