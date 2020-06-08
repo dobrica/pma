@@ -11,7 +11,8 @@ import androidx.fragment.app.Fragment;
 
 import com.example.pma.ereader.ItemDetailActivity;
 import com.example.pma.ereader.R;
-import com.example.pma.ereader.model.dummy.DummyContent;
+import com.example.pma.ereader.model.item.Item;
+import com.example.pma.ereader.model.item.ItemsRepository;
 import com.google.android.material.appbar.CollapsingToolbarLayout;
 
 /**
@@ -28,9 +29,9 @@ public class ItemDetailFragment extends Fragment {
     public static final String ARG_ITEM_ID = "item_id";
 
     /**
-     * The dummy content this fragment is presenting.
+     * The content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private Item mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -44,15 +45,13 @@ public class ItemDetailFragment extends Fragment {
         super.onCreate(savedInstanceState);
 
         if (getArguments().containsKey(ARG_ITEM_ID)) {
-            // Load the dummy content specified by the fragment
-            // arguments. In a real-world scenario, use a Loader
-            // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            // TODO: implement Loader to load content from a content provider.
+            mItem = ItemsRepository.getInstance().getItemByTitle(getArguments().getString(ARG_ITEM_ID));
 
             Activity activity = this.getActivity();
-            CollapsingToolbarLayout appBarLayout = (CollapsingToolbarLayout) activity.findViewById(R.id.toolbar_layout);
+            CollapsingToolbarLayout appBarLayout = activity.findViewById(R.id.toolbar_layout);
             if (appBarLayout != null) {
-                appBarLayout.setTitle(mItem.content);
+                appBarLayout.setTitle(mItem.getAuthor());
             }
         }
     }
@@ -64,7 +63,9 @@ public class ItemDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.item_detail)).setText(mItem.details);
+            TextView tv = rootView.findViewById(R.id.item_detail);
+            tv.setText(mItem.getTitle());
+            tv.setPadding(50, 100, 50, 50);
         }
 
         return rootView;

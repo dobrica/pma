@@ -1,20 +1,21 @@
 package com.example.pma.ereader.ui.bookstore;
 
-import com.example.pma.ereader.model.dummy.DummyContent;
+import com.example.pma.ereader.model.item.Item;
 import com.example.pma.ereader.ui.ListFragmentViewModel;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class BookstoreFragmentViewModel extends ListFragmentViewModel {
 
-    private List<DummyContent.DummyItem> items;
+    private List<Item> items;
 
     public BookstoreFragmentViewModel() {
         super();
-        items = DummyContent.ITEMS;
+        items = new ArrayList<>();
     }
 
-    public List<DummyContent.DummyItem> getItems() {
+    public List<Item> getItems() {
         return items;
     }
 }
