@@ -4,14 +4,19 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 
+import com.example.pma.ereader.model.item.Item;
+import com.example.pma.ereader.model.item.ItemsRepository;
 import com.example.pma.ereader.ui.ItemDetailFragment;
 import com.example.pma.ereader.ui.ListFragment;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import static com.example.pma.ereader.ui.ItemDetailFragment.ARG_ITEM_ID;
 
 /**
  * An activity representing a single Item detail screen. This
@@ -21,21 +26,14 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
  */
 public class ItemDetailActivity extends AppCompatActivity {
 
+    private Item item;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_item_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.detail_toolbar);
+        Toolbar toolbar = findViewById(R.id.detail_toolbar);
         setSupportActionBar(toolbar);
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(ItemDetailActivity.this, ReadingActivity.class);
-                startActivity(intent);
-            }
-        });
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
@@ -56,14 +54,29 @@ public class ItemDetailActivity extends AppCompatActivity {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(ItemDetailFragment.ARG_ITEM_ID,
-                    getIntent().getStringExtra(ItemDetailFragment.ARG_ITEM_ID));
+            arguments.putString(ARG_ITEM_ID,
+                    getIntent().getStringExtra(ARG_ITEM_ID));
             ItemDetailFragment fragment = new ItemDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.item_detail_container, fragment)
                     .commit();
+
+            item = ItemsRepository.getInstance().getItemByTitle(arguments.getString(ARG_ITEM_ID));
         }
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(ItemDetailActivity.this, ReadingActivity.class);
+                intent.putExtra("filePath", item.getFilePath());
+                startActivity(intent);
+            }
+        });
+
+        ImageView coverImage = findViewById(R.id.coverImage);
+        coverImage.setImageBitmap(item.getCoverImageBitmap());
     }
 
     @Override

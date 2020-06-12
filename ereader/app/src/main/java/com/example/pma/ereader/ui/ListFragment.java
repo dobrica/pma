@@ -15,7 +15,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.pma.ereader.ItemDetailActivity;
 import com.example.pma.ereader.R;
-import com.example.pma.ereader.model.dummy.DummyContent;
+import com.example.pma.ereader.model.item.Item;
 
 import java.util.List;
 
@@ -54,15 +54,15 @@ public abstract class ListFragment extends Fragment {
             extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
         private final FragmentManager mFragmentManager;
-        private final List<DummyContent.DummyItem> mValues;
+        private final List<Item> mValues;
         private final boolean mTwoPane;
         private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                DummyContent.DummyItem item = (DummyContent.DummyItem) view.getTag();
+                Item item = (Item) view.getTag();
                 if (mTwoPane) {
                     Bundle arguments = new Bundle();
-                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.id);
+                    arguments.putString(ItemDetailFragment.ARG_ITEM_ID, item.getTitle());
                     ItemDetailFragment fragment = new ItemDetailFragment();
                     fragment.setArguments(arguments);
                     mFragmentManager.beginTransaction()
@@ -71,15 +71,15 @@ public abstract class ListFragment extends Fragment {
                 } else {
                     Context context = view.getContext();
                     Intent intent = new Intent(context, ItemDetailActivity.class);
-                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.id);
+                    intent.putExtra(ItemDetailFragment.ARG_ITEM_ID, item.getTitle());
 
                     context.startActivity(intent);
                 }
             }
         };
 
-        public SimpleItemRecyclerViewAdapter(ListFragment fragment,
-                                      List<DummyContent.DummyItem> items,
+        SimpleItemRecyclerViewAdapter(ListFragment fragment,
+                                      List<Item> items,
                                       boolean twoPane) {
             mValues = items;
             mTwoPane = twoPane;
@@ -95,7 +95,7 @@ public abstract class ListFragment extends Fragment {
 
         @Override
         public void onBindViewHolder(final ListFragment.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
-            holder.mContentView.setText(mValues.get(position).content);
+            holder.mContentView.setText(mValues.get(position).getTitle());
 
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
@@ -112,8 +112,10 @@ public abstract class ListFragment extends Fragment {
 
             ViewHolder(View view) {
                 super(view);
+
                 mContentView = (TextView) view.findViewById(R.id.content);
                 mContentView2 = (TextView) view.findViewById(R.id.content2);
+
             }
         }
     }

@@ -1,7 +1,6 @@
 package com.example.pma.ereader.ui.register;
 
 import com.example.pma.ereader.R;
-import com.example.pma.ereader.model.login.Result;
 import com.example.pma.ereader.model.register.RegisterRepository;
 import com.example.pma.ereader.model.register.RegisteredUser;
 
@@ -13,7 +12,7 @@ import androidx.lifecycle.ViewModel;
 public class RegisterViewModel extends ViewModel {
 
 	private MutableLiveData<RegisterFormState> registerFormState = new MutableLiveData<>();
-	private MutableLiveData<RegisterResult> loginResult = new MutableLiveData<>();
+	private MutableLiveData<RegisterResult> registerResult = new MutableLiveData<>();
 	private RegisterRepository registerRepository;
 
 	RegisterViewModel(RegisterRepository registerRepository) {
@@ -25,17 +24,16 @@ public class RegisterViewModel extends ViewModel {
 	}
 
 	public LiveData<RegisterResult> getRegisterResult() {
-		return loginResult;
+		return registerResult;
 	}
 
 	public void register(String name, String username, String password, String repeatedPassword) {
-		Result<RegisteredUser> result = registerRepository.register(name, username, password, repeatedPassword);
+		RegisteredUser result = registerRepository.register(name, username, password, repeatedPassword);
 
-		if (result instanceof Result.Success) {
-			RegisteredUser data = ((Result.Success<RegisteredUser>) result).getData();
-			loginResult.setValue(new RegisterResult(new RegisteredUserView(data.getFullName())));
+		if (result != null) {
+			registerResult.setValue(new RegisterResult(new RegisteredUserView(result.getFullName())));
 		} else {
-			loginResult.setValue(new RegisterResult(R.string.registration_failed));
+			registerResult.setValue(new RegisterResult(R.string.registration_failed));
 		}
 	}
 

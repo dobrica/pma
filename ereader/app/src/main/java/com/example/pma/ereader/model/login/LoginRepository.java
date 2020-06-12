@@ -37,10 +37,10 @@ public class LoginRepository {
 		this.user = user;
 	}
 
-	public Result<LoggedInUser> login(String username, String password) {
-		Result<LoggedInUser> result = dataSource.login(username, password);
-		if (result instanceof Result.Success) {
-			setLoggedInUser(((Result.Success<LoggedInUser>) result).getData());
+	public LoggedInUser login(String username, String password) {
+		LoggedInUser result = dataSource.login(username, password);
+		if (result != null) {
+			setLoggedInUser(result);
 		}
 		return result;
 	}
