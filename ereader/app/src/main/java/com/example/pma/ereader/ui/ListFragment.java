@@ -108,14 +108,10 @@ public abstract class ListFragment extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mContentView;
-            final TextView mContentView2;
 
             ViewHolder(View view) {
                 super(view);
-
-                mContentView = (TextView) view.findViewById(R.id.content);
-                mContentView2 = (TextView) view.findViewById(R.id.content2);
-
+                mContentView = view.findViewById(R.id.content);
             }
         }
     }
