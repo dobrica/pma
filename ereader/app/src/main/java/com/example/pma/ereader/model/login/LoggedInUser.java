@@ -1,23 +1,14 @@
 package com.example.pma.ereader.model.login;
 
-/**
- * Data class that captures user information for logged in users retrieved from LoginRepository
- */
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class LoggedInUser {
 
 	private String userId;
 	private String displayName;
+	private String token;
 
-	public LoggedInUser(String userId, String displayName) {
-		this.userId = userId;
-		this.displayName = displayName;
-	}
-
-	public String getUserId() {
-		return userId;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
 }
