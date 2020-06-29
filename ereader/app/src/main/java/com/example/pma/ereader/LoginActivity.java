@@ -1,5 +1,19 @@
 package com.example.pma.ereader;
 
+import com.example.pma.ereader.model.register.RegisteredUser;
+import com.example.pma.ereader.ui.login.LoggedInUserView;
+import com.example.pma.ereader.ui.login.LoginFormState;
+import com.example.pma.ereader.ui.login.LoginResult;
+import com.example.pma.ereader.ui.login.LoginViewModel;
+import com.example.pma.ereader.ui.login.LoginViewModelFactory;
+import com.google.gson.Gson;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -17,28 +31,11 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
-
-import com.example.pma.ereader.model.register.RegisterDataSource;
-import com.example.pma.ereader.model.register.RegisteredUser;
-import com.example.pma.ereader.ui.login.LoggedInUserView;
-import com.example.pma.ereader.ui.login.LoginFormState;
-import com.example.pma.ereader.ui.login.LoginResult;
-import com.example.pma.ereader.ui.login.LoginViewModel;
-import com.example.pma.ereader.ui.login.LoginViewModelFactory;
-import com.google.gson.Gson;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -54,7 +51,7 @@ public class LoginActivity extends AppCompatActivity {
 		super.onCreate(savedInstanceState);
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
+			WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getSupportActionBar().hide();
 		prepareDummyUsers();
 		setContentView(R.layout.activity_login);
@@ -128,8 +125,7 @@ public class LoginActivity extends AppCompatActivity {
 			@Override
 			public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
 				if (actionId == EditorInfo.IME_ACTION_DONE) {
-					loginViewModel.login(usernameEditText.getText().toString(),
-						passwordEditText.getText().toString());
+					loginViewModel.login(usernameEditText.getText().toString(), passwordEditText.getText().toString());
 				}
 				return false;
 			}
@@ -169,10 +165,10 @@ public class LoginActivity extends AppCompatActivity {
 
 	public void prepareDummyUsers() {
 		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-		if(sharedPref.getStringSet("Users", Collections.<String>emptySet()).isEmpty()) {
+		if (sharedPref.getStringSet("Users", Collections.<String>emptySet()).isEmpty()) {
 			final Set<String> users = new HashSet<>();
 			Gson gson = new Gson();
-			for(RegisteredUser registeredUser: PREDEFINED_USERS) {
+			for (RegisteredUser registeredUser : PREDEFINED_USERS) {
 				users.add(gson.toJson(registeredUser));
 			}
 			SharedPreferences.Editor editor = sharedPref.edit();

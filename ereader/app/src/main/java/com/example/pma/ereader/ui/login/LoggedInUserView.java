@@ -1,17 +1,12 @@
 package com.example.pma.ereader.ui.login;
 
-/**
- * Class exposing authenticated user details to the UI.
- */
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@Getter
+@AllArgsConstructor
 public class LoggedInUserView {
+
 	private String displayName;
-	//... other data fields that may be accessible to the UI
 
-	LoggedInUserView(String displayName) {
-		this.displayName = displayName;
-	}
-
-	public String getDisplayName() {
-		return displayName;
-	}
 }

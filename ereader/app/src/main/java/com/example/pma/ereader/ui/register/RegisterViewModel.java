@@ -1,7 +1,8 @@
 package com.example.pma.ereader.ui.register;
 
 import com.example.pma.ereader.R;
-import com.example.pma.ereader.model.register.RegisterRepository;
+import com.example.pma.ereader.model.register.RegisterCallback;
+import com.example.pma.ereader.model.register.RegisterService;
 import com.example.pma.ereader.model.register.RegisteredUser;
 
 import android.util.Patterns;
@@ -13,10 +14,11 @@ public class RegisterViewModel extends ViewModel {
 
 	private MutableLiveData<RegisterFormState> registerFormState = new MutableLiveData<>();
 	private MutableLiveData<RegisterResult> registerResult = new MutableLiveData<>();
-	private RegisterRepository registerRepository;
 
-	RegisterViewModel(RegisterRepository registerRepository) {
-		this.registerRepository = registerRepository;
+	private RegisterService registerService;
+
+	RegisterViewModel(RegisterService registerService) {
+		this.registerService = registerService;
 	}
 
 	public LiveData<RegisterFormState> getRegisterFormState() {
@@ -27,14 +29,22 @@ public class RegisterViewModel extends ViewModel {
 		return registerResult;
 	}
 
-	public void register(String name, String username, String password, String repeatedPassword) {
-		RegisteredUser result = registerRepository.register(name, username, password, repeatedPassword);
+	public void register(String name, String username, String password) {
+		registerService.register(name, username, password, new RegisterCallback() {
+			@Override
+			public void onSuccess(final RegisteredUser registeredUser) {
+				if (registeredUser != null) {
+					registerResult.setValue(new RegisterResult(new RegisteredUserView(registeredUser.getFullName())));
+				} else {
+					registerResult.setValue(new RegisterResult(R.string.registration_failed));
+				}
+			}
 
-		if (result != null) {
-			registerResult.setValue(new RegisterResult(new RegisteredUserView(result.getFullName())));
-		} else {
-			registerResult.setValue(new RegisterResult(R.string.registration_failed));
-		}
+			@Override
+			public void onError(final Throwable throwable) {
+				registerResult.setValue(new RegisterResult(R.string.registration_failed));
+			}
+		});
 	}
 
 	public void registerDataChanged(String name, String username, String password, String repeatedPassword) {
@@ -43,7 +53,7 @@ public class RegisterViewModel extends ViewModel {
 		} else if (!isUserNameValid(username)) {
 			registerFormState.setValue(new RegisterFormState(null, R.string.invalid_username, null, null));
 		} else if (!isPasswordValid(password)) {
-			registerFormState.setValue(new RegisterFormState(null, null,  R.string.invalid_password, null));
+			registerFormState.setValue(new RegisterFormState(null, null, R.string.invalid_password, null));
 		} else if (!doPasswordsMatch(password, repeatedPassword)) {
 			registerFormState.setValue(new RegisterFormState(null, null, null, R.string.invalid_password_match));
 		} else {
