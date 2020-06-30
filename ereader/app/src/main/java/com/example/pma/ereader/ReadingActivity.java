@@ -154,6 +154,8 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
             }
         }, null));
 
+    //    textView.setTextSize();
+
         int pxPadding = dpToPx(15);
 
         textView.setPadding(pxPadding, pxPadding, pxPadding, pxPadding);

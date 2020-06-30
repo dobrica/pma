@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -96,7 +97,7 @@ public abstract class ListFragment extends Fragment {
         @Override
         public void onBindViewHolder(final ListFragment.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
             holder.mContentView.setText(mValues.get(position).getTitle());
-
+            holder.imageView.setImageBitmap(mValues.get(position).getCoverImageBitmap());
             holder.itemView.setTag(mValues.get(position));
             holder.itemView.setOnClickListener(mOnClickListener);
         }
@@ -108,10 +109,12 @@ public abstract class ListFragment extends Fragment {
 
         class ViewHolder extends RecyclerView.ViewHolder {
             final TextView mContentView;
+            final ImageView imageView;
 
             ViewHolder(View view) {
                 super(view);
                 mContentView = view.findViewById(R.id.content);
+                imageView = view.findViewById(R.id.image);
             }
         }
     }
