@@ -9,16 +9,16 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.example.pma.ereader.R;
-import com.example.pma.ereader.ui.ListFragment;
+import com.example.pma.ereader.ui.BookstoreListFragment;
 
-public class BookstoreFragment extends ListFragment {
+public class BookstoreFragment extends BookstoreListFragment {
 
     private BookstoreFragmentViewModel viewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        viewModel = new ViewModelProvider(this).get(BookstoreFragmentViewModel.class);
-        return buildFragment(R.layout.fragment_bookstore, inflater, container, viewModel);
+        viewModel = new ViewModelProvider(this,  new BookstoreViewModelFactory()).get(BookstoreFragmentViewModel.class);
+        return buildFragment(R.layout.fragment_bookstore, inflater, container);
     }
 
 }
