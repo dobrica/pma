@@ -8,14 +8,18 @@ import com.example.pma.ereader.ui.bookstore.BookstoreRepository;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.SneakyThrows;
 
 public class BookstoreListFragment extends Fragment {
 
@@ -44,7 +48,35 @@ public class BookstoreListFragment extends Fragment {
 		@Override
 		public BookstoreListFragment.SimpleItemRecyclerViewAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
 			View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.bookstore_list_content, parent, false);
-			return new ViewHolder(view);
+			final ProgressBar downloadProgressBar = view.findViewById(R.id.loading_download);
+
+			final ViewHolder viewHolder = new ViewHolder(view);
+			final View downloadButton = view.findViewById(R.id.download);
+			downloadButton.setOnClickListener(new OnClickListener() {
+				@SneakyThrows
+				@Override
+				public void onClick(final View v) {
+					if (View.GONE == downloadProgressBar.getVisibility()) {
+						downloadProgressBar.setVisibility(View.VISIBLE);
+					}
+					final BookstoreRepository bookstoreRepository = BookstoreRepository.getInstance();
+					Log.i("", "Downloading " + mValues.get(viewHolder.getAdapterPosition()).getTitle());
+					bookstoreRepository.download(mValues.get(viewHolder.getAdapterPosition()).getTitle(), new BookstoreCallback() {
+						@Override
+						public void onSuccess(final List<Item> items) {
+							//ignore
+						}
+
+						@Override
+						public void onDownloadSuccess() {
+							if (View.VISIBLE == downloadProgressBar.getVisibility()) {
+								downloadProgressBar.setVisibility(View.GONE);
+							}
+						}
+					});
+				}
+			});
+			return viewHolder;
 		}
 
 		@Override
@@ -69,7 +101,8 @@ public class BookstoreListFragment extends Fragment {
 				}
 
 				@Override
-				public void onError(final Throwable throwable) {
+				public void onDownloadSuccess() {
+					//ignore
 				}
 			});
 		}

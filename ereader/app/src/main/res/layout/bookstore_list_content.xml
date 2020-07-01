@@ -37,6 +37,16 @@
                 android:layout_margin="@dimen/text_margin"
                 android:button="@android:drawable/stat_sys_download" />
         </LinearLayout>
+
+        <ProgressBar
+            android:id="@+id/loading_download"
+            style="@style/Widget.AppCompat.ProgressBar"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_gravity="center"
+            android:visibility="gone"
+            />
+
     </LinearLayout>
 
 </LinearLayout>

@@ -9,6 +9,7 @@ public interface BookstoreCallback {
 
 	void onSuccess(List<Item> items);
 
-	void onError(Throwable throwable);
+	void onDownloadSuccess();
+
 
 }
