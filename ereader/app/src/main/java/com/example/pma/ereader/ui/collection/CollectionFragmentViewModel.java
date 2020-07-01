@@ -31,12 +31,11 @@ public class CollectionFragmentViewModel extends ListFragmentViewModel {
 
     private void initItemsList(){
         Reader reader = new Reader();
-        List<File> files = FileUtility.getEpubFilesFromAssets(context);
+        List<File> files = FileUtility.getLocalEpubFiles(context);
         for (File file: files) {
             Item item = new Item();
             try {
                 reader.setInfoContent(file.getPath());
-//                private String id; generate id
                 String title = reader.getInfoPackage().getMetadata().getTitle();
                 if (title != null && !title.equals("")) {
                     item.setTitle(reader.getInfoPackage().getMetadata().getTitle());
