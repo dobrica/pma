@@ -7,6 +7,8 @@ import com.example.pma.ereader.network.User;
 import com.example.pma.ereader.network.UserApi;
 import com.example.pma.ereader.utility.TokenUtils;
 
+import org.apache.commons.codec.binary.StringUtils;
+
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
@@ -29,6 +31,8 @@ import retrofit2.Retrofit;
 
 public class AccountFragment extends Fragment {
 
+	private static final String NOT_AVAILABLE = "N/A";
+
 	private AccountViewModel accountViewModel;
 
 	public View onCreateView(@NonNull LayoutInflater inflater,
@@ -42,27 +46,36 @@ public class AccountFragment extends Fragment {
 
 		final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("TOKEN", "");
 
-		Retrofit retrofit = NetworkClient.getRetrofitClient();
-		UserApi userApi = retrofit.create(UserApi.class);
-		Call call = userApi.getUserInfo(token, TokenUtils.getUsernameFromToken());
+		if(token != null && !token.isEmpty() && !token.equals("OFFLINE")) {
+			Retrofit retrofit = NetworkClient.getRetrofitClient();
+			UserApi userApi = retrofit.create(UserApi.class);
+			Call call = userApi.getUserInfo(token, TokenUtils.getUsernameFromToken());
 
-		call.enqueue(new Callback<User>() {
-			@Override
-			public void onResponse(final Call<User> call, final Response<User> response) {
-				if (response.isSuccessful()) {
-					final User user = response.body();
-					Resources res = getResources();
-					userNameTextView.setText(res.getString(R.string.account_username, user.getUsername()));
-					nameTextView.setText(res.getString(R.string.account_name, user.getFullName()));
-					idTextView.setText(res.getString(R.string.account_user_id, String.valueOf(user.getId())));
+			call.enqueue(new Callback<User>() {
+				@Override
+				public void onResponse(final Call<User> call, final Response<User> response) {
+					if (response.isSuccessful()) {
+						final User user = response.body();
+						Resources res = getResources();
+						userNameTextView.setText(res.getString(R.string.account_username, user.getUsername()));
+						nameTextView.setText(res.getString(R.string.account_name, user.getFullName()));
+						idTextView.setText(res.getString(R.string.account_user_id, String.valueOf(user.getId())));
+					}
 				}
-			}
 
-			@Override
-			public void onFailure(final Call call, final Throwable t) {
-                // do nothing
-			}
-		});
+				@Override
+				public void onFailure(final Call call, final Throwable t) {
+					// do nothing
+				}
+			});
+		} else {
+			Resources res = getResources();
+			userNameTextView.setText(res.getString(R.string.account_username, NOT_AVAILABLE));
+			nameTextView.setText(res.getString(R.string.account_name, NOT_AVAILABLE));
+			idTextView.setText(res.getString(R.string.account_user_id, NOT_AVAILABLE));
+			Button button = root.findViewById(R.id.logout);
+			button.setText("Leave offline mode");
+		}
 
 		logOut(root);
 		return root;

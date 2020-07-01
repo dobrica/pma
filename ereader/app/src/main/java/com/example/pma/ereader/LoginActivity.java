@@ -23,6 +23,7 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
@@ -61,6 +62,21 @@ public class LoginActivity extends AppCompatActivity {
 		final EditText passwordEditText = findViewById(R.id.reg_password);
 		final Button loginButton = findViewById(R.id.login);
 		final Button registerButton = findViewById(R.id.register);
+		final Button goOfflineButton = findViewById(R.id.offline);
+		goOfflineButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(final View v) {
+				final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+				SharedPreferences.Editor editor = sharedPref.edit();
+				editor.putString("TOKEN", "OFFLINE");
+				editor.apply();
+				setResult(Activity.RESULT_OK);
+				Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+				startActivity(intent);
+				//Complete and destroy login activity once successful
+				finish();
+			}
+		});
 		registerButton.setEnabled(true);
 		final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
