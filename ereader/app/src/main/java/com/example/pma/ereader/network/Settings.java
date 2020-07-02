@@ -1,21 +1,19 @@
 package com.example.pma.ereader.network;
 
+
 import androidx.annotation.Nullable;
 import lombok.Builder;
 import lombok.Data;
 
 @Data
 @Builder(toBuilder = true)
-public class User {
+public class Settings {
 
 	@Nullable
 	private Long id;
-	private String fullName;
-	private String username;
 	@Nullable
-	private String password;
-	@Nullable
-	private Settings settings;
+	private Long userId;
+	private Long fontSize;
+	private Long brightnessLevel;
 
 }
-
