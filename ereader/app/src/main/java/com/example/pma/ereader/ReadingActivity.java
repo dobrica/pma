@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -25,11 +26,14 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.pma.ereader.model.TableOfContents;
 import com.example.pma.ereader.ui.Fullscreen;
 import com.example.pma.ereader.ui.PageFragment;
 import com.github.mertakdut.BookSection;
 import com.github.mertakdut.CssStatus;
+import com.github.mertakdut.NavPoint;
 import com.github.mertakdut.Reader;
+import com.github.mertakdut.Toc;
 import com.github.mertakdut.exception.OutOfPagesException;
 import com.github.mertakdut.exception.ReadingException;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -74,8 +78,8 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
                 reader = new Reader();
 
                 // Setting optionals once per file is enough.
-                int contentPerSectionSize = pxScreenHeight / 2 - 50;
-                reader.setMaxContentPerSection(contentPerSectionSize);
+//                int contentPerSectionSize = 1000;
+//                reader.setMaxContentPerSection(contentPerSectionSize);
                 reader.setCssStatus(CssStatus.OMIT); // for web view CssStatus.INCLUDE
                 reader.setIsIncludingTextContent(true);
                 reader.setIsOmittingTitleTag(true);
@@ -88,6 +92,14 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
                 if (reader.isSavedProgressFound()) {
                     int lastSavedPage = reader.loadProgress();
                     mViewPager.setCurrentItem(lastSavedPage);
+                }
+
+                Toc.NavMap navMap = reader.getToc().getNavMap();
+                TableOfContents.items.clear();
+                for (NavPoint np: navMap.getNavPoints()) {
+                    if (np.getNavLabel() != null) {
+                        TableOfContents.items.add(np.getNavLabel());
+                    }
                 }
 
             } catch (ReadingException e) {
@@ -120,13 +132,17 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         isSkippedToPage = false;
 
         if (bookSection != null) {
-            return setFragmentView(false, bookSection.getSectionContent(), "text/html", "UTF-8"); // isContentStyled = true for web view
+            return setFragmentView(false, bookSection.getSectionContent(), bookSection.getMediaType(), "UTF-8", position); // isContentStyled = true for web view
         }
 
         return null;
     }
 
-    private View setFragmentView(boolean isContentStyled, String data, String mimeType, String encoding) {
+    private View setFragmentView(boolean isContentStyled, String data, String mimeType, String encoding, int position) {
+
+        int maxContent = (int) (100* (0.175*20));
+
+        reader.setMaxContentPerSection(maxContent);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
@@ -137,45 +153,42 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         textView.setLayoutParams(layoutParams);
         textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
 
-        textView.setText(Html.fromHtml(data, new Html.ImageGetter() {
-            @Override
-            public Drawable getDrawable(String source) {
-                String imageAsStr = source.substring(source.indexOf(";base64,") + 8);
-                byte[] imageAsBytes = Base64.decode(imageAsStr, Base64.DEFAULT);
-                Bitmap imageAsBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+        textView.setTextSize(20);
 
-                int imageWidthStartPx = (pxScreenWidth - imageAsBitmap.getWidth()) / 2;
-                int imageWidthEndPx = pxScreenWidth - imageWidthStartPx;
-                int imageHeight = imageAsBitmap.getHeight() > pxScreenHeight ? (pxScreenHeight - 50) : imageAsBitmap.getHeight();
+        int page = position + 1;
 
-                Drawable imageAsDrawable = new BitmapDrawable(getResources(), imageAsBitmap);
-                imageAsDrawable.setBounds(imageWidthStartPx, 0, imageWidthEndPx, imageHeight);
-                return imageAsDrawable;
-            }
-        }, null));
+        CharSequence sequence = Html.fromHtml(page + data, source -> {
+            String imageAsStr = source.substring(source.indexOf(";base64,") + 8);
+            byte[] imageAsBytes = Base64.decode(imageAsStr, Base64.DEFAULT);
+            Bitmap imageAsBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 
-    //    textView.setTextSize();
+            int imageWidthStartPx = (pxScreenWidth - imageAsBitmap.getWidth()) / 2;
+            int imageWidthEndPx = pxScreenWidth - imageWidthStartPx;
+            int imageHeight = imageAsBitmap.getHeight() > pxScreenHeight ? (pxScreenHeight - 50) : imageAsBitmap.getHeight();
+
+            Drawable imageAsDrawable = new BitmapDrawable(getResources(), imageAsBitmap);
+            imageAsDrawable.setBounds(imageWidthStartPx, 0, imageWidthEndPx, imageHeight);
+            return imageAsDrawable;
+        }, null);
+
+        Log.d("CharSequenceLength: ", sequence.toString());
+
+        textView.setText(sequence, null);
 
         int pxPadding = dpToPx(15);
-
         textView.setPadding(pxPadding, pxPadding, pxPadding, pxPadding);
-
-        textView.setTextSize(20);
 
         linearLayout.addView(textView);
 
-        linearLayout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toggle();
+        linearLayout.setOnClickListener(view -> {
+            toggle();
 
-                if (mVisible) {
-                    slideBottomViewBackToScreen(options);
-                    slideTopViewBackToScreen(bookmark);
-                } else {
-                    slideBottomViewOffScreen(options);
-                    slideTopViewOffScreen(bookmark);
-                }
+            if (mVisible) {
+                slideBottomViewBackToScreen(options);
+                slideTopViewBackToScreen(bookmark);
+            } else {
+                slideBottomViewOffScreen(options);
+                slideTopViewOffScreen(bookmark);
             }
         });
 
