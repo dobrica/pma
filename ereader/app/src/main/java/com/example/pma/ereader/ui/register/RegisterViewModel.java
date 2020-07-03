@@ -2,7 +2,7 @@ package com.example.pma.ereader.ui.register;
 
 import com.example.pma.ereader.R;
 import com.example.pma.ereader.model.register.RegisterCallback;
-import com.example.pma.ereader.model.register.RegisterService;
+import com.example.pma.ereader.model.register.RegisterRepository;
 import com.example.pma.ereader.model.register.RegisteredUser;
 
 import android.util.Patterns;
@@ -15,10 +15,10 @@ public class RegisterViewModel extends ViewModel {
 	private MutableLiveData<RegisterFormState> registerFormState = new MutableLiveData<>();
 	private MutableLiveData<RegisterResult> registerResult = new MutableLiveData<>();
 
-	private RegisterService registerService;
+	private RegisterRepository registerRepository;
 
-	RegisterViewModel(RegisterService registerService) {
-		this.registerService = registerService;
+	RegisterViewModel(RegisterRepository registerRepository) {
+		this.registerRepository = registerRepository;
 	}
 
 	public LiveData<RegisterFormState> getRegisterFormState() {
@@ -30,7 +30,7 @@ public class RegisterViewModel extends ViewModel {
 	}
 
 	public void register(String name, String username, String password) {
-		registerService.register(name, username, password, new RegisterCallback() {
+		registerRepository.register(name, username, password, new RegisterCallback() {
 			@Override
 			public void onSuccess(final RegisteredUser registeredUser) {
 				if (registeredUser != null) {
