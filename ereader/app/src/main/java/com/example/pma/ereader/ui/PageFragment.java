@@ -2,6 +2,7 @@ package com.example.pma.ereader.ui;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -58,8 +59,13 @@ public class PageFragment extends Fragment {
         View view = null;
         if (getArguments() != null) {
             view = onFragmentReadyListener.onFragmentReady(getArguments().getInt(ARG_TAB_POSITON));
-            view.setVerticalScrollBarEnabled(false);
-            view.setHorizontalScrollBarEnabled(false);
+            if (view != null) {
+                view.setVerticalScrollBarEnabled(false);
+                view.setHorizontalScrollBarEnabled(false);
+            }
+            else {
+                Log.d("END", "END");
+            }
         }
 
         if (view != null) {
