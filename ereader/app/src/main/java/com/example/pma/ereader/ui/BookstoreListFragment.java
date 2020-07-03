@@ -1,18 +1,23 @@
 package com.example.pma.ereader.ui;
 
+import com.example.pma.ereader.MainActivity;
 import com.example.pma.ereader.R;
 import com.example.pma.ereader.model.item.Item;
 import com.example.pma.ereader.ui.bookstore.BookstoreCallback;
 import com.example.pma.ereader.ui.bookstore.BookstoreRepository;
+import com.example.pma.ereader.utility.FileUtility;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -34,14 +39,16 @@ public class BookstoreListFragment extends Fragment {
 	}
 
 	private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-		recyclerView.setAdapter(new BookstoreListFragment.SimpleItemRecyclerViewAdapter());
+		recyclerView.setAdapter(new BookstoreListFragment.SimpleItemRecyclerViewAdapter(getContext()));
 	}
 
 	public static class SimpleItemRecyclerViewAdapter extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
 		private List<Item> mValues = new ArrayList<>();
+		private final Context context;
 
-		SimpleItemRecyclerViewAdapter() {
+		SimpleItemRecyclerViewAdapter(final Context context) {
+			this.context = context;
 			getItems();
 		}
 
@@ -51,7 +58,7 @@ public class BookstoreListFragment extends Fragment {
 			final ProgressBar downloadProgressBar = view.findViewById(R.id.loading_download);
 
 			final ViewHolder viewHolder = new ViewHolder(view);
-			final View downloadButton = view.findViewById(R.id.download);
+			final Button downloadButton = view.findViewById(R.id.download);
 			downloadButton.setOnClickListener(new OnClickListener() {
 				@SneakyThrows
 				@Override
@@ -70,7 +77,9 @@ public class BookstoreListFragment extends Fragment {
 						@Override
 						public void onDownloadSuccess() {
 							if (View.VISIBLE == downloadProgressBar.getVisibility()) {
-								downloadProgressBar.setVisibility(View.GONE);
+								if (context.getClass().equals(MainActivity.class)) {
+									((MainActivity) context).runOnUiThread(() -> downloadProgressBar.setVisibility(View.GONE));
+								}
 							}
 						}
 					});
@@ -84,6 +93,9 @@ public class BookstoreListFragment extends Fragment {
 			holder.mContentView.setText(mValues.get(position).getTitle());
 			holder.imageView.setImageBitmap(mValues.get(position).getCoverImageBitmap());
 			holder.itemView.setTag(mValues.get(position));
+			if (FileUtility.fileAlreadyExistsContext(context, mValues.get(position).getTitle())) {
+				holder.downloadButton.setVisibility(View.INVISIBLE);
+			}
 		}
 
 		@Override
@@ -110,11 +122,13 @@ public class BookstoreListFragment extends Fragment {
 		static class ViewHolder extends RecyclerView.ViewHolder {
 			final TextView mContentView;
 			final ImageView imageView;
+			final Button downloadButton;
 
 			ViewHolder(View view) {
 				super(view);
 				mContentView = view.findViewById(R.id.content);
 				imageView = view.findViewById(R.id.image);
+				downloadButton = view.findViewById(R.id.download);
 			}
 		}
 	}

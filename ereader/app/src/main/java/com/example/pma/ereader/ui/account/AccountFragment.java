@@ -46,7 +46,7 @@ public class AccountFragment extends Fragment {
 
 		final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("TOKEN", "");
 
-		if(token != null && !token.isEmpty() && !token.equals("OFFLINE")) {
+		if(!token.isEmpty() && !token.equals("OFFLINE")) {
 			Retrofit retrofit = NetworkClient.getRetrofitClient();
 			UserApi userApi = retrofit.create(UserApi.class);
 			Call call = userApi.getUserInfo(token, TokenUtils.getUsernameFromToken());

@@ -2,57 +2,68 @@ package com.example.pma.ereader.utility;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.FilenameFilter;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.io.FileUtils;
 
 import android.content.Context;
+import android.util.Log;
 
 public class FileUtility {
+
+	private static final String FILENAME_PATTERN = "[^a-zA-Z0-9,_-]";
+	public static final String EXTENSTION = ".epub";
 
 	public static List<File> getLocalEpubFiles(Context context) {
 		List<File> files = new ArrayList<>();
 		String[] paths = context.getFilesDir().list();
 
 		for (String fileName : Objects.requireNonNull(paths)) {
-			if (fileName.endsWith(".epub")) {
-				File f = getDownloadedFiles(context, fileName);
-				files.add(f);
+			if (fileName.endsWith(EXTENSTION)) {
+				File f = getDownloadedFile(context, fileName);
+				if (f != null) {
+					files.add(f);
+				}
 			}
 		}
 
 		return files;
 	}
 
-	private static File getDownloadedFiles(Context context, String fileName) {
+	public static boolean deleteLocalEpubFile(Context context, String fileName) {
+		final File downloadedFile = getDownloadedFile(context, fileName.replaceAll(FILENAME_PATTERN, "").concat(EXTENSTION));
+		if (downloadedFile != null && downloadedFile.exists()) {
+			final boolean deleted = downloadedFile.delete();
+			if (deleted) {
+				Log.i("", String.format("File %s deleted", fileName));
+			} else {
+				Log.w("", String.format("File %s not deleted", fileName));
+			}
+			return deleted;
+		}
+		return false;
+	}
 
-		File file = new File(context.getCacheDir() + "/" + fileName);
+	public static boolean fileAlreadyExistsContext(Context context, String fileName) {
+		return !Arrays.asList(Objects.requireNonNull(context.getFilesDir()
+			.list((dir, name) -> name.contains(fileName.replaceAll(FILENAME_PATTERN, "").concat(EXTENSTION))))).isEmpty();
+	}
 
-		if (!file.exists()) {
-			try {
-				final File[] files = context.getFilesDir().listFiles();
-				for (File f : files) {
-					if (f.getName().equals(fileName)) {
-						InputStream is = FileUtils.openInputStream(f);
-						int size = is.available();
-						byte[] buffer = new byte[size];
-						is.read(buffer);
-						is.close();
-
-						FileOutputStream fos = new FileOutputStream(file);
-						fos.write(buffer);
-						fos.close();
-					}
+	private static File getDownloadedFile(Context context, String fileName) {
+		final File[] files = context.getFilesDir().listFiles();
+		if (files != null) {
+			for (File f : files) {
+				if (f.getPath().contains(fileName)) {
+					return f;
 				}
-			} catch (Exception e) {
-				throw new RuntimeException(e);
 			}
 		}
-
-		return file;
+		return null;
 	}
 
 }

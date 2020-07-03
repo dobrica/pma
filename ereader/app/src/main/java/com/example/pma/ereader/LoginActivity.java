@@ -28,6 +28,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -40,11 +41,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 public class LoginActivity extends AppCompatActivity {
 
-	public static List<RegisteredUser> PREDEFINED_USERS = Arrays.asList(
-		RegisteredUser.builder().fullName("User1").userName("user@one.com").build(),
-		RegisteredUser.builder().fullName("User2").userName("user@two.com").build(),
-		RegisteredUser.builder().fullName("User3").userName("user@three.com").build());
-
 	private LoginViewModel loginViewModel;
 
 	@Override
@@ -54,7 +50,6 @@ public class LoginActivity extends AppCompatActivity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 			WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		getSupportActionBar().hide();
-		prepareDummyUsers();
 		setContentView(R.layout.activity_login);
 		loginViewModel = new ViewModelProvider(this, new LoginViewModelFactory()).get(LoginViewModel.class);
 
@@ -62,21 +57,7 @@ public class LoginActivity extends AppCompatActivity {
 		final EditText passwordEditText = findViewById(R.id.reg_password);
 		final Button loginButton = findViewById(R.id.login);
 		final Button registerButton = findViewById(R.id.register);
-		final Button goOfflineButton = findViewById(R.id.offline);
-		goOfflineButton.setOnClickListener(new OnClickListener() {
-			@Override
-			public void onClick(final View v) {
-				final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
-				SharedPreferences.Editor editor = sharedPref.edit();
-				editor.putString("TOKEN", "OFFLINE");
-				editor.apply();
-				setResult(Activity.RESULT_OK);
-				Intent intent = new Intent(LoginActivity.this, MainActivity.class);
-				startActivity(intent);
-				//Complete and destroy login activity once successful
-				finish();
-			}
-		});
+		final CheckBox offlineCheckbox = findViewById(R.id.checkBox);
 		registerButton.setEnabled(true);
 		final ProgressBar loadingProgressBar = findViewById(R.id.loading);
 
@@ -87,6 +68,7 @@ public class LoginActivity extends AppCompatActivity {
 					return;
 				}
 				loginButton.setEnabled(loginFormState.isDataValid());
+				offlineCheckbox.setEnabled(loginFormState.isDataValid());
 				if (loginFormState.getUsernameError() != null) {
 					usernameEditText.setError(getString(loginFormState.getUsernameError()));
 				}
@@ -151,8 +133,19 @@ public class LoginActivity extends AppCompatActivity {
 			@Override
 			public void onClick(View v) {
 				loadingProgressBar.setVisibility(View.VISIBLE);
-				loginViewModel.login(usernameEditText.getText().toString(),
-					passwordEditText.getText().toString());
+				if (offlineCheckbox.isChecked()) {
+					final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+					SharedPreferences.Editor editor = sharedPref.edit();
+					editor.putString("TOKEN", "OFFLINE");
+					editor.apply();
+					setResult(Activity.RESULT_OK);
+					Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+					startActivity(intent);
+					finish();
+				} else {
+					loginViewModel.login(usernameEditText.getText().toString(),
+						passwordEditText.getText().toString());
+				}
 			}
 		});
 		registerButton.setOnClickListener(new View.OnClickListener() {
@@ -179,17 +172,4 @@ public class LoginActivity extends AppCompatActivity {
 		finish();
 	}
 
-	public void prepareDummyUsers() {
-		final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(LoginActivity.this);
-		if (sharedPref.getStringSet("Users", Collections.<String>emptySet()).isEmpty()) {
-			final Set<String> users = new HashSet<>();
-			Gson gson = new Gson();
-			for (RegisteredUser registeredUser : PREDEFINED_USERS) {
-				users.add(gson.toJson(registeredUser));
-			}
-			SharedPreferences.Editor editor = sharedPref.edit();
-			editor.putStringSet("Users", users);
-			editor.apply();
-		}
-	}
 }

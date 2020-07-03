@@ -4,7 +4,7 @@ import com.example.pma.ereader.MyApplication;
 import com.example.pma.ereader.R;
 import com.example.pma.ereader.model.login.LoggedInUser;
 import com.example.pma.ereader.model.login.LoginCallback;
-import com.example.pma.ereader.model.login.LoginService;
+import com.example.pma.ereader.model.login.LoginRepository;
 
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
@@ -17,10 +17,10 @@ public class LoginViewModel extends ViewModel {
 
 	private MutableLiveData<LoginFormState> loginFormState = new MutableLiveData<>();
 	private MutableLiveData<LoginResult> loginResult = new MutableLiveData<>();
-	private LoginService loginService;
+	private LoginRepository loginRepository;
 
-	LoginViewModel(LoginService loginService) {
-		this.loginService = loginService;
+	LoginViewModel(LoginRepository loginRepository) {
+		this.loginRepository = loginRepository;
 	}
 
 	public LiveData<LoginFormState> getLoginFormState() {
@@ -32,7 +32,7 @@ public class LoginViewModel extends ViewModel {
 	}
 
 	public void login(String username, String password) {
-		loginService.login(username, password, new LoginCallback() {
+		loginRepository.login(username, password, new LoginCallback() {
 			@Override
 			public void onSuccess(final LoggedInUser loggedInUser) {
 				if (loggedInUser.getToken() != null) {

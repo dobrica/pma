@@ -29,6 +29,7 @@ import androidx.viewpager.widget.ViewPager;
 import com.example.pma.ereader.model.TableOfContents;
 import com.example.pma.ereader.ui.Fullscreen;
 import com.example.pma.ereader.ui.PageFragment;
+import com.example.pma.ereader.ui.settings.SettingsChanged;
 import com.github.mertakdut.BookSection;
 import com.github.mertakdut.CssStatus;
 import com.github.mertakdut.NavPoint;
@@ -38,7 +39,10 @@ import com.github.mertakdut.exception.OutOfPagesException;
 import com.github.mertakdut.exception.ReadingException;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class ReadingActivity extends Fullscreen implements PageFragment.OnFragmentReadyListener {
+import java.util.ArrayList;
+import java.util.List;
+
+public class ReadingActivity extends Fullscreen implements PageFragment.OnFragmentReadyListener, SettingsChanged {
 
     private View options;
     private FrameLayout bookmark;
@@ -48,6 +52,8 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
     private int pxScreenWidth;
     private int pxScreenHeight;
     private boolean isSkippedToPage = false;
+    private final List<TextView> views = new ArrayList<>();
+    private int textSize = 20;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,7 +102,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
                 Toc.NavMap navMap = reader.getToc().getNavMap();
                 TableOfContents.items.clear();
-                for (NavPoint np: navMap.getNavPoints()) {
+                for (NavPoint np : navMap.getNavPoints()) {
                     if (np.getNavLabel() != null) {
                         TableOfContents.items.add(np.getNavLabel());
                     }
@@ -140,7 +146,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
     private View setFragmentView(boolean isContentStyled, String data, String mimeType, String encoding, int position) {
 
-        int maxContent = (int) (100* (0.175*20));
+        int maxContent = (int) (100 * (0.175 * 20));
 
         reader.setMaxContentPerSection(maxContent);
 
@@ -149,11 +155,13 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         LinearLayout linearLayout = new LinearLayout(ReadingActivity.this);
         linearLayout.setLayoutParams(layoutParams);
 
+
         TextView textView = new TextView(ReadingActivity.this);
+        views.add(textView);
+
         textView.setLayoutParams(layoutParams);
         textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
-
-        textView.setTextSize(20);
+        textView.setTextSize(textSize);
 
         int page = position + 1;
 
@@ -225,4 +233,11 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         slideTopViewOffScreen(bookmark);
     }
 
+    @Override
+    public void fontChanged(int fontSize) {
+        textSize = fontSize;
+        for (TextView tv : views) {
+            tv.setTextSize(fontSize);
+        }
+    }
 }
