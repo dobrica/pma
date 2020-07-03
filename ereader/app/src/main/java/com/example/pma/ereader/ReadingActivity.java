@@ -27,6 +27,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.pma.ereader.ui.Fullscreen;
 import com.example.pma.ereader.ui.PageFragment;
+import com.example.pma.ereader.ui.settings.SettingsChanged;
 import com.github.mertakdut.BookSection;
 import com.github.mertakdut.CssStatus;
 import com.github.mertakdut.Reader;
@@ -34,12 +35,13 @@ import com.github.mertakdut.exception.OutOfPagesException;
 import com.github.mertakdut.exception.ReadingException;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-public class ReadingActivity extends Fullscreen implements PageFragment.OnFragmentReadyListener {
+public class ReadingActivity extends Fullscreen implements PageFragment.OnFragmentReadyListener, SettingsChanged {
 
     private View options;
     private FrameLayout bookmark;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Reader reader;
+    private TextView textView = null;
     private int pageCount = Integer.MAX_VALUE;
     private int pxScreenWidth;
     private int pxScreenHeight;
@@ -133,7 +135,8 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         LinearLayout linearLayout = new LinearLayout(ReadingActivity.this);
         linearLayout.setLayoutParams(layoutParams);
 
-        TextView textView = new TextView(ReadingActivity.this);
+         textView = new TextView(ReadingActivity.this);
+
         textView.setLayoutParams(layoutParams);
         textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
 
@@ -185,6 +188,14 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
     private int dpToPx(int dp) {
         DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
         return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
+
+    @Override
+    public void fontChanged(int fontSize) {
+        if(textView != null) {
+            textView.setTextSize(fontSize);
+            textView.invalidate();
+        }
     }
 
     public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
