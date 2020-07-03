@@ -26,41 +26,43 @@ import java.util.Set;
 
 public class SettingsFragment extends Fragment {
 
-    private SettingsViewModel settingsViewModel;
-    private SettingsChanged settingsChanged;
+	private SettingsViewModel settingsViewModel;
+	private SettingsChanged settingsChanged;
     boolean success = false;
 
-    public View onCreateView(@NonNull LayoutInflater inflater,
-                             ViewGroup container, Bundle savedInstanceState) {
-        settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_settings, container, false);
-        SeekBar fontSeekBar = root.findViewById(R.id.fontSeekBar);
-        SeekBar brightnessBar = root.findViewById(R.id.brightness);
+	public View onCreateView(@NonNull LayoutInflater inflater,
+		ViewGroup container, Bundle savedInstanceState) {
+		settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
+		View root = inflater.inflate(R.layout.fragment_settings, container, false);
+		SeekBar fontSeekBar = root.findViewById(R.id.fontSeekBar);
+		SeekBar brightnessBar = root.findViewById(R.id.brightness);
         fontSeekBar.setProgress(12);
         fontSeekBar.incrementProgressBy(1);
         fontSeekBar.setMax(36);
         brightnessBar.setMax(255);
         brightnessBar.setProgress(getBrightness());
-        this.settingsChanged = (ReadingActivity) getActivity();
+		if (getActivity() instanceof ReadingActivity) {this.settingsChanged = (ReadingActivity) getActivity();
 
         getPermission();
 
-        fontSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                Log.i("", String.format("Progress %d", progress));
-                settingsChanged.fontChanged(progress);
-            }
+        }
+		fontSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+			@Override
+			public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+				if (settingsChanged != null) {
+					settingsChanged.fontChanged(progress);
+				}
+			}
 
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
+			@Override
+			public void onStartTrackingTouch(SeekBar seekBar) {
 
-            }
+			}
 
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
+			@Override
+			public void onStopTrackingTouch(SeekBar seekBar) {
 
-            }
+			}
         });
         brightnessBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -79,9 +81,9 @@ public class SettingsFragment extends Fragment {
             public void onStopTrackingTouch(SeekBar seekBar) {
 
             }
-        });
-        return root;
-    }
+		});
+		return root;
+	}
 
     private void setBrightness(int brightness) {
         if (brightness < 0) {
