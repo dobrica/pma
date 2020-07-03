@@ -1,9 +1,13 @@
 package com.example.pma.ereader.ui.settings;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,18 +26,24 @@ public class SettingsFragment extends Fragment {
                              ViewGroup container, Bundle savedInstanceState) {
         settingsViewModel = new ViewModelProvider(this).get(SettingsViewModel.class);
         View root = inflater.inflate(R.layout.fragment_settings, container, false);
-        final TextView textView = root.findViewById(R.id.text_settings);
-        final TextView textView2 = root.findViewById(R.id.text_settings2);
-        settingsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        SeekBar fontSeekBar = root.findViewById(R.id.fontSeekBar);
+        fontSeekBar.setProgress(12);
+        fontSeekBar.incrementProgressBy(1);
+        fontSeekBar.setMax(36);
+        fontSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
-            public void onChanged(@Nullable String s) {
-                textView.setText(s);
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.i("",String.format("Progress %d",progress));
             }
-        });
-        settingsViewModel.getText2().observe(getViewLifecycleOwner(), new Observer<String>() {
+
             @Override
-            public void onChanged(@Nullable String s) {
-                textView2.setText(s);
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
         return root;

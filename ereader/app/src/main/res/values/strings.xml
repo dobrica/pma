@@ -57,4 +57,6 @@
     <string name="notif_on_sync_summ">Send you notifications about sync</string>
     <string name="notif_on_sync_title">Sync notifications</string>
     <string name="offline_text">Go offline</string>
+    <string name="font">Font</string>
+    <string name="brightness">Brightness</string>
 </resources>
