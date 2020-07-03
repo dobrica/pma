@@ -1,7 +1,5 @@
 package com.example.pma.ereader.ui.collection;
 
-import android.content.Context;
-
 import com.example.pma.ereader.model.item.Item;
 import com.example.pma.ereader.model.item.ItemsRepository;
 import com.example.pma.ereader.ui.ListFragmentViewModel;
@@ -13,6 +11,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.content.Context;
+
 public class CollectionFragmentViewModel extends ListFragmentViewModel {
     private List<Item> items;
     private Context context;
@@ -22,14 +22,11 @@ public class CollectionFragmentViewModel extends ListFragmentViewModel {
         context = mContext;
         items = new ArrayList<>();
 
-        initItemsList();
+        getItems();
     }
 
-    public List<Item> getItems() {
-        return items;
-    }
-
-    private void initItemsList(){
+    public List<Item> getItems(){
+        items.clear();
         Reader reader = new Reader();
         List<File> files = FileUtility.getLocalEpubFiles(context);
         for (File file: files) {
@@ -54,5 +51,7 @@ public class CollectionFragmentViewModel extends ListFragmentViewModel {
         }
 
         ItemsRepository.getInstance().setItems(items);
+
+        return items;
     }
 }

@@ -14,10 +14,12 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
+import lombok.SneakyThrows;
 
 import com.example.pma.ereader.ItemDetailActivity;
 import com.example.pma.ereader.R;
 import com.example.pma.ereader.model.item.Item;
+import com.example.pma.ereader.utility.FileUtility;
 
 import java.util.List;
 
@@ -49,7 +51,7 @@ public abstract class ListFragment extends Fragment {
 	}
 
 	private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-		recyclerView.setAdapter(new ListFragment.SimpleItemRecyclerViewAdapter(this, viewModel.getItems(), mTwoPane));
+		recyclerView.setAdapter(new ListFragment.SimpleItemRecyclerViewAdapter(this, viewModel.getItems(), mTwoPane, getContext()));
 	}
 
 	public static class SimpleItemRecyclerViewAdapter
@@ -58,6 +60,7 @@ public abstract class ListFragment extends Fragment {
 		private final FragmentManager mFragmentManager;
 		private final List<Item> mValues;
 		private final boolean mTwoPane;
+		private final Context context;
 		private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -80,10 +83,11 @@ public abstract class ListFragment extends Fragment {
 			}
 		};
 
-		SimpleItemRecyclerViewAdapter(ListFragment fragment, List<Item> items, boolean twoPane) {
+		SimpleItemRecyclerViewAdapter(ListFragment fragment, List<Item> items, boolean twoPane, final Context context) {
 			mValues = items;
 			mTwoPane = twoPane;
 			mFragmentManager = fragment.getParentFragmentManager();
+			this.context = context;
 		}
 
 		@Override
@@ -93,11 +97,15 @@ public abstract class ListFragment extends Fragment {
 			final ViewHolder viewHolder = new ViewHolder(view);
 			final View removeButton = view.findViewById(R.id.remove);
 			removeButton.setOnClickListener(new OnClickListener() {
+				@SneakyThrows
 				@Override
 				public void onClick(final View v) {
-					mValues.remove(viewHolder.getAdapterPosition());
-					//TODO delete file from file system
-					ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
+					final boolean deleted = FileUtility.deleteLocalEpubFile(context, mValues.get(viewHolder.getAdapterPosition()).getTitle());
+					if (deleted) {
+						Thread.sleep(1000);
+						mValues.remove(viewHolder.getAdapterPosition());
+						ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
+					}
 				}
 			});
 			return viewHolder;
