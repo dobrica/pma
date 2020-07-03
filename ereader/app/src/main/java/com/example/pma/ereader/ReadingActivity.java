@@ -49,6 +49,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 	private int pxScreenHeight;
 	private boolean isSkippedToPage = false;
 	private final List<TextView> views = new ArrayList<>();
+	private int textSize = 20;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -143,7 +144,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
 		textView.setLayoutParams(layoutParams);
 		textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
-
+		textView.setTextSize(textSize);
 		textView.setText(Html.fromHtml(data, new Html.ImageGetter() {
 			@Override
 			public Drawable getDrawable(String source) {
@@ -164,8 +165,6 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 		int pxPadding = dpToPx(15);
 
 		textView.setPadding(pxPadding, pxPadding, pxPadding, pxPadding);
-
-		textView.setTextSize(20);
 
 		linearLayout.addView(textView);
 
@@ -194,6 +193,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
 	@Override
 	public void fontChanged(int fontSize) {
+		textSize = fontSize;
 		for (TextView tv : views) {
 			tv.setTextSize(fontSize);
 		}
