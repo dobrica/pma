@@ -10,13 +10,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class RegisterService {
+public class RegisterRepository {
 
-	private static volatile RegisterService instance;
+	private static volatile RegisterRepository instance;
 
-	public static RegisterService getInstance() {
+	public static RegisterRepository getInstance() {
 		if (instance == null) {
-			instance = new RegisterService();
+			instance = new RegisterRepository();
 		}
 		return instance;
 	}

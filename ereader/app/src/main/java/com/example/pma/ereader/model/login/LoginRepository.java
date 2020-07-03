@@ -12,13 +12,13 @@ import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
-public class LoginService {
+public class LoginRepository {
 
-	private static volatile LoginService instance;
+	private static volatile LoginRepository instance;
 
-	public static LoginService getInstance() {
+	public static LoginRepository getInstance() {
 		if (instance == null) {
-			instance = new LoginService();
+			instance = new LoginRepository();
 		}
 		return instance;
 	}
