@@ -32,15 +32,15 @@
                     android:title="@string/all_books" />
                 <item
                     android:id="@+id/nav_favourites"
-                    android:icon="@drawable/ic_chevron_right_accent"
+                    android:icon="@drawable/ic_star_dark"
                     android:title="@string/favourites" />
                 <item
                     android:id="@+id/nav_to_read"
-                    android:icon="@drawable/ic_chevron_right_accent"
+                    android:icon="@drawable/ic_menu_book_dark"
                     android:title="@string/to_read" />
                 <item
                     android:id="@+id/nav_have_read"
-                    android:icon="@drawable/ic_chevron_right_accent"
+                    android:icon="@drawable/ic_bookmark_dark"
                     android:title="@string/have_read" />
             </group>
         </menu>
