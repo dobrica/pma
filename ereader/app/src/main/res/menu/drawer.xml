@@ -42,10 +42,6 @@
                     android:id="@+id/nav_have_read"
                     android:icon="@drawable/ic_chevron_right_accent"
                     android:title="@string/have_read" />
-                <item
-                    android:id="@+id/nav_new_collection"
-                    android:icon="@drawable/ic_add"
-                    android:title="@string/new_collection" />
             </group>
         </menu>
     </item>
