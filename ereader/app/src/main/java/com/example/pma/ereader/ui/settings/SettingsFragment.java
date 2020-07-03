@@ -36,9 +36,9 @@ public class SettingsFragment extends Fragment {
 		fontSeekBar.setMax(36);
 		brightnessBar.setMax(255);
 		brightnessBar.setProgress(getBrightness());
+		getPermission();
 		if (getActivity() instanceof ReadingActivity) {
 			this.settingsChanged = (ReadingActivity) getActivity();
-			getPermission();
 		} else {
 			fontSeekBar.setProgress(0);
 			fontSeekBar.setEnabled(false);
@@ -105,10 +105,8 @@ public class SettingsFragment extends Fragment {
 	}
 
 	private void getPermission() {
-		boolean value;
 		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-			value = Settings.System.canWrite(MyApplication.getAppContext());
-			if (value) {
+			if (Settings.System.canWrite(MyApplication.getAppContext())) {
 				success = true;
 			} else {
 				Intent intent = new Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS);
