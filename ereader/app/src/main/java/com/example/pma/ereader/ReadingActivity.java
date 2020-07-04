@@ -53,6 +53,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
     private boolean isSkippedToPage = false;
     private final List<TextView> views = new ArrayList<>();
     private int textSize = 20;
+    private int lastSavedPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -91,7 +92,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
                 }
 
                 if (reader.isSavedProgressFound()) {
-                    int lastSavedPage = reader.loadProgress();
+                    lastSavedPage = reader.loadProgress();
                     mViewPager.setCurrentItem(lastSavedPage);
                 }
 
@@ -140,6 +141,9 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
     }
 
     private View setFragmentView(String data, int position) {
+
+        lastSavedPage = position;
+
         int maxContent = (int) ((pxScreenWidth/10) * (0.15 * textSize));
         reader.setMaxContentPerSection(maxContent);
 
@@ -227,6 +231,18 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         textSize = fontSize;
         for (TextView tv : views) {
             tv.setTextSize(fontSize);
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        try {
+            reader.saveProgress(lastSavedPage);
+        } catch (ReadingException e) {
+            e.printStackTrace();
+        } catch (OutOfPagesException e) {
+            e.printStackTrace();
         }
     }
 }
