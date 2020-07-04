@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.text.Html;
 import android.util.Base64;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -25,12 +26,15 @@ import androidx.navigation.Navigation;
 import androidx.navigation.ui.NavigationUI;
 import androidx.viewpager.widget.ViewPager;
 
+import com.example.pma.ereader.model.TableOfContents;
 import com.example.pma.ereader.ui.Fullscreen;
 import com.example.pma.ereader.ui.PageFragment;
 import com.example.pma.ereader.ui.settings.SettingsChanged;
 import com.github.mertakdut.BookSection;
 import com.github.mertakdut.CssStatus;
+import com.github.mertakdut.NavPoint;
 import com.github.mertakdut.Reader;
+import com.github.mertakdut.Toc;
 import com.github.mertakdut.exception.OutOfPagesException;
 import com.github.mertakdut.exception.ReadingException;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -40,188 +44,189 @@ import java.util.List;
 
 public class ReadingActivity extends Fullscreen implements PageFragment.OnFragmentReadyListener, SettingsChanged {
 
-	private View options;
-	private FrameLayout bookmark;
-	private SectionsPagerAdapter mSectionsPagerAdapter;
-	private Reader reader;
-	private int pageCount = Integer.MAX_VALUE;
-	private int pxScreenWidth;
-	private int pxScreenHeight;
-	private boolean isSkippedToPage = false;
-	private final List<TextView> views = new ArrayList<>();
-	private int textSize = 20;
+    private View options;
+    private SectionsPagerAdapter mSectionsPagerAdapter;
+    private Reader reader;
+    private int pageCount = Integer.MAX_VALUE;
+    private int pxScreenWidth;
+    private int pxScreenHeight;
+    private boolean isSkippedToPage = false;
+    private final List<TextView> views = new ArrayList<>();
+    private int textSize = 20;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_reading);
-		mContentView = findViewById(R.id.reading_layout);
-		bookmark = findViewById(R.id.bookmark);
-		options = findViewById(R.id.options_container);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_reading);
+        mContentView = findViewById(R.id.reading_layout);
+        options = findViewById(R.id.options_container);
 
-		hide();
-		mVisible = false;
+        hide();
+        mVisible = false;
 
-		NavController navController = Navigation.findNavController(this, R.id.nav_reading_fragment);
-		NavigationUI.setupWithNavController((BottomNavigationView) findViewById(R.id.bottom_navigation), navController);
+        NavController navController = Navigation.findNavController(this, R.id.nav_reading_fragment);
+        NavigationUI.setupWithNavController((BottomNavigationView) findViewById(R.id.bottom_navigation), navController);
 
-		pxScreenWidth = getResources().getDisplayMetrics().widthPixels;
-		pxScreenHeight = getResources().getDisplayMetrics().heightPixels;
+        pxScreenWidth = getResources().getDisplayMetrics().widthPixels;
+        pxScreenHeight = getResources().getDisplayMetrics().heightPixels;
 
-		mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-		ViewPager mViewPager = findViewById(R.id.fullscreen_content);
-		mViewPager.setOffscreenPageLimit(0);
-		mViewPager.setAdapter(mSectionsPagerAdapter);
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        ViewPager mViewPager = findViewById(R.id.fullscreen_content);
+        mViewPager.setOffscreenPageLimit(0);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-		if (getIntent() != null && getIntent().getExtras() != null) {
-			String filePath = getIntent().getExtras().getString("filePath");
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            String filePath = getIntent().getExtras().getString("filePath");
 
-			try {
-				reader = new Reader();
+            try {
+                reader = new Reader();
 
-				// Setting optionals once per file is enough.
-				int contentPerSectionSize = pxScreenHeight / 2 - 50;
-				reader.setMaxContentPerSection(contentPerSectionSize);
-				reader.setCssStatus(CssStatus.OMIT); // for web view CssStatus.INCLUDE
-				reader.setIsIncludingTextContent(true);
-				reader.setIsOmittingTitleTag(true);
+                reader.setCssStatus(CssStatus.OMIT); // for web view CssStatus.INCLUDE
+                reader.setIsIncludingTextContent(false);
+                reader.setIsOmittingTitleTag(true);
 
-				// This method must be called before readSection.
-				if (filePath != null) {
-					reader.setFullContent(filePath);
-				}
+                // This method must be called before readSection.
+                if (filePath != null) {
+                    reader.setFullContent(filePath);
+                }
 
-				if (reader.isSavedProgressFound()) {
-					int lastSavedPage = reader.loadProgress();
-					mViewPager.setCurrentItem(lastSavedPage);
-				}
+                if (reader.isSavedProgressFound()) {
+                    int lastSavedPage = reader.loadProgress();
+                    mViewPager.setCurrentItem(lastSavedPage);
+                }
 
-			} catch (ReadingException e) {
-				Toast.makeText(ReadingActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-			}
-		}
-	}
+                Toc.NavMap navMap = reader.getToc().getNavMap();
+                TableOfContents.items.clear();
+                for (NavPoint np : navMap.getNavPoints()) {
+                    if (np.getNavLabel() != null) {
+                        TableOfContents.items.add(np.getNavLabel());
+                    }
+                }
 
-	@Override
-	public View onFragmentReady(int position) {
+            } catch (ReadingException e) {
+                Toast.makeText(ReadingActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 
-		BookSection bookSection = null;
+    @Override
+    public View onFragmentReady(int position) {
 
-		try {
-			bookSection = reader.readSection(position);
-		} catch (ReadingException e) {
-			e.printStackTrace();
-			Toast.makeText(ReadingActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-		} catch (OutOfPagesException e) {
-			e.printStackTrace();
-			this.pageCount = e.getPageCount();
+        BookSection bookSection = null;
 
-			if (isSkippedToPage) {
-				Toast.makeText(ReadingActivity.this, "Max page number is: " + this.pageCount, Toast.LENGTH_LONG).show();
-			}
+        try {
+            bookSection = reader.readSection(position);
+        } catch (ReadingException e) {
+            e.printStackTrace();
+            Toast.makeText(ReadingActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+        } catch (OutOfPagesException e) {
+            e.printStackTrace();
+            this.pageCount = e.getPageCount();
 
-			mSectionsPagerAdapter.notifyDataSetChanged();
-		}
+            if (isSkippedToPage) {
+                Toast.makeText(ReadingActivity.this, "Max page number is: " + this.pageCount, Toast.LENGTH_LONG).show();
+            }
 
-		isSkippedToPage = false;
+            mSectionsPagerAdapter.notifyDataSetChanged();
+        }
 
-		if (bookSection != null) {
-			return setFragmentView(false, bookSection.getSectionContent(), "text/html", "UTF-8"); // isContentStyled = true for web view
-		}
+        isSkippedToPage = false;
 
-		return null;
-	}
+        if (bookSection != null) {
+            return setFragmentView(bookSection.getSectionContent(), position);
+        }
 
-	private View setFragmentView(boolean isContentStyled, String data, String mimeType, String encoding) {
+        return null;
+    }
 
-		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+    private View setFragmentView(String data, int position) {
+        int maxContent = (int) ((pxScreenWidth/10) * (0.15 * textSize));
+        reader.setMaxContentPerSection(maxContent);
 
-		LinearLayout linearLayout = new LinearLayout(ReadingActivity.this);
-		linearLayout.setLayoutParams(layoutParams);
+        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-		TextView textView = new TextView(ReadingActivity.this);
-		views.add(textView);
+        LinearLayout linearLayout = new LinearLayout(ReadingActivity.this);
+        linearLayout.setLayoutParams(layoutParams);
 
-		textView.setLayoutParams(layoutParams);
-		textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
-		textView.setTextSize(textSize);
-		textView.setText(Html.fromHtml(data, new Html.ImageGetter() {
-			@Override
-			public Drawable getDrawable(String source) {
-				String imageAsStr = source.substring(source.indexOf(";base64,") + 8);
-				byte[] imageAsBytes = Base64.decode(imageAsStr, Base64.DEFAULT);
-				Bitmap imageAsBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
+        TextView textView = new TextView(ReadingActivity.this);
+        views.add(textView);
 
-				int imageWidthStartPx = (pxScreenWidth - imageAsBitmap.getWidth()) / 2;
-				int imageWidthEndPx = pxScreenWidth - imageWidthStartPx;
-				int imageHeight = imageAsBitmap.getHeight() > pxScreenHeight ? (pxScreenHeight - 50) : imageAsBitmap.getHeight();
+        textView.setLayoutParams(layoutParams);
+        textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
+        textView.setTextSize(textSize);
 
-				Drawable imageAsDrawable = new BitmapDrawable(getResources(), imageAsBitmap);
-				imageAsDrawable.setBounds(imageWidthStartPx, 0, imageWidthEndPx, imageHeight);
-				return imageAsDrawable;
-			}
-		}, null));
+        int page = position + 1;
 
-		int pxPadding = dpToPx(15);
+        CharSequence sequence = Html.fromHtml(page + data, source -> {
+            String imageAsStr = source.substring(source.indexOf(";base64,") + 8);
+            byte[] imageAsBytes = Base64.decode(imageAsStr, Base64.DEFAULT);
+            Bitmap imageAsBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
 
-		textView.setPadding(pxPadding, pxPadding, pxPadding, pxPadding);
+            int imageWidthStartPx = (pxScreenWidth - imageAsBitmap.getWidth()) / 2;
+            int imageWidthEndPx = pxScreenWidth - imageWidthStartPx;
+            int imageHeight = imageAsBitmap.getHeight() > pxScreenHeight ? (pxScreenHeight - 50) : imageAsBitmap.getHeight();
 
-		linearLayout.addView(textView);
+            Drawable imageAsDrawable = new BitmapDrawable(getResources(), imageAsBitmap);
+            imageAsDrawable.setBounds(imageWidthStartPx, 0, imageWidthEndPx, imageHeight);
+            return imageAsDrawable;
+        }, null);
 
-		linearLayout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				toggle();
+        Log.d("CharSequenceLength: ", sequence.toString());
 
-				if (mVisible) {
-					slideBottomViewBackToScreen(options);
-					slideTopViewBackToScreen(bookmark);
-				} else {
-					slideBottomViewOffScreen(options);
-					slideTopViewOffScreen(bookmark);
-				}
-			}
-		});
+        textView.setText(sequence, null);
 
-		return linearLayout;
-	}
+        int pxPadding = dpToPx(15);
+        textView.setPadding(pxPadding, pxPadding, pxPadding, pxPadding);
 
-	private int dpToPx(int dp) {
-		DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
-		return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
-	}
+        linearLayout.addView(textView);
 
-	@Override
-	public void fontChanged(int fontSize) {
-		textSize = fontSize;
-		for (TextView tv : views) {
-			tv.setTextSize(fontSize);
-		}
-	}
+        linearLayout.setOnClickListener(view -> {
+            toggle();
 
-	public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
+            if (mVisible) {
+                slideBottomViewBackToScreen(options);
+            } else {
+                slideBottomViewOffScreen(options);
+            }
+        });
 
-		SectionsPagerAdapter(FragmentManager fm) {
-			super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-		}
+        return linearLayout;
+    }
 
-		@Override
-		public int getCount() {
-			return pageCount;
-		}
+    private int dpToPx(int dp) {
+        DisplayMetrics displayMetrics = getResources().getDisplayMetrics();
+        return Math.round(dp * (displayMetrics.xdpi / DisplayMetrics.DENSITY_DEFAULT));
+    }
 
-		@NonNull
-		@Override
-		public Fragment getItem(int position) {
-			return PageFragment.newInstance(position);
-		}
-	}
+    public class SectionsPagerAdapter extends FragmentStatePagerAdapter {
 
-	@Override
-	public void onWindowFocusChanged(boolean hasFocus) {
-		super.onWindowFocusChanged(hasFocus);
-		slideBottomViewOffScreen(options);
-		slideTopViewOffScreen(bookmark);
-	}
+        SectionsPagerAdapter(FragmentManager fm) {
+            super(fm, FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
+        }
 
+        @Override
+        public int getCount() {
+            return pageCount;
+        }
+
+        @NonNull
+        @Override
+        public Fragment getItem(int position) {
+            return PageFragment.newInstance(position);
+        }
+    }
+
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        slideBottomViewOffScreen(options);
+    }
+
+    @Override
+    public void fontChanged(int fontSize) {
+        textSize = fontSize;
+        for (TextView tv : views) {
+            tv.setTextSize(fontSize);
+        }
+    }
 }

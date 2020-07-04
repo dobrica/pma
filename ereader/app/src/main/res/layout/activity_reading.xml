@@ -31,7 +31,9 @@
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent">
+        app:layout_constraintRight_toRightOf="parent"
+        android:paddingTop="10dp"
+        android:background="@drawable/top_border_rectangle" >
 
         <fragment
             android:id="@+id/nav_reading_fragment"
@@ -57,28 +59,5 @@
             app:menu="@menu/bnav_reading_screen" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <FrameLayout
-        android:id="@+id/bookmark"
-        android:layout_width="100dp"
-        android:layout_height="120dp"
-        android:background="@drawable/ic_bookmark"
-        android:backgroundTint="@color/background"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <ToggleButton
-            android:id="@+id/bookmarkBtn"
-            android:layout_width="44dp"
-            android:layout_height="44dp"
-            android:layout_gravity="bottom|center"
-            android:layout_marginBottom="30dp"
-            android:background="@drawable/bookmark_selector"
-            android:backgroundTint="@color/accent"
-            android:textOff=""
-            android:textOn=""
-            android:theme="@style/FloatingActionButtonStyle" />
-
-    </FrameLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

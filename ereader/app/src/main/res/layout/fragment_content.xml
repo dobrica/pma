@@ -3,14 +3,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/book_content_layout"
     tools:context=".ui.content.ContentFragment">
 
-    <TextView
-        android:gravity="center"
-        android:textSize="30sp"
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="CONTENT"
-        android:background="@drawable/top_border_rectangle" />
+        android:layout_height="match_parent" >
+        <TextView
+            android:id="@+id/book_content"
+            android:gravity="center"
+            android:textSize="30sp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="CONTENT" />
+    </ScrollView>
+
 
 </FrameLayout>
