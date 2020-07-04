@@ -60,7 +60,7 @@ public class PageFragment extends Fragment {
         if (getArguments() != null) {
             view = onFragmentReadyListener.onFragmentReady(getArguments().getInt(ARG_TAB_POSITON));
             if (view != null) {
-                view.setVerticalScrollBarEnabled(false);
+                view.setVerticalScrollBarEnabled(true);
                 view.setHorizontalScrollBarEnabled(false);
             }
             else {

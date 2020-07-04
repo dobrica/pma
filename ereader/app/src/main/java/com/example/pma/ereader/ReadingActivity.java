@@ -13,6 +13,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -142,13 +143,13 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
     private View setFragmentView(String data, int position) {
 
-        int maxContent = (int) ((pxScreenWidth/10) * (0.15 * textSize));
+        int maxContent = (int) ((pxScreenWidth/10) * (0.3 * textSize));
         reader.setMaxContentPerSection(maxContent);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
-        LinearLayout linearLayout = new LinearLayout(ReadingActivity.this);
-        linearLayout.setLayoutParams(layoutParams);
+        ScrollView scrollView = new ScrollView(ReadingActivity.this);
+        scrollView.setLayoutParams(layoutParams);
 
         TextView textView = new TextView(ReadingActivity.this);
         views.add(textView);
@@ -156,6 +157,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         textView.setLayoutParams(layoutParams);
         textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
         textView.setTextSize(textSize);
+        textView.setVerticalScrollBarEnabled(true);
 
         String page = position > 0 ? String.valueOf(position) : "";
 
@@ -173,16 +175,14 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
             return imageAsDrawable;
         }, null);
 
-        Log.d("CharSequenceLength: ", sequence.toString());
-
         textView.setText(sequence, null);
 
         int pxPadding = dpToPx(15);
         textView.setPadding(pxPadding, pxPadding, pxPadding, pxPadding);
 
-        linearLayout.addView(textView);
+        scrollView.addView(textView);
 
-        linearLayout.setOnClickListener(view -> {
+        textView.setOnClickListener(view -> {
             toggle();
 
             if (mVisible) {
@@ -192,7 +192,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
             }
         });
 
-        return linearLayout;
+        return scrollView;
     }
 
     private int dpToPx(int dp) {
