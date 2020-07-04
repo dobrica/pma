@@ -46,7 +46,7 @@ public class AccountFragment extends Fragment {
 
 		final String token = PreferenceManager.getDefaultSharedPreferences(getContext()).getString("TOKEN", "");
 
-		if(!token.isEmpty() && !token.equals("OFFLINE")) {
+		if(!token.isEmpty() && !token.contains("OFFLINE")) {
 			Retrofit retrofit = NetworkClient.getRetrofitClient();
 			UserApi userApi = retrofit.create(UserApi.class);
 			Call call = userApi.getUserInfo(token, TokenUtils.getUsernameFromToken());
@@ -70,11 +70,11 @@ public class AccountFragment extends Fragment {
 			});
 		} else {
 			Resources res = getResources();
-			userNameTextView.setText(res.getString(R.string.account_username, NOT_AVAILABLE));
+			userNameTextView.setText(res.getString(R.string.account_username, TokenUtils.getUsernameFromToken()));
 			nameTextView.setText(res.getString(R.string.account_name, NOT_AVAILABLE));
 			idTextView.setText(res.getString(R.string.account_user_id, NOT_AVAILABLE));
 			Button button = root.findViewById(R.id.logout);
-			button.setText("Leave offline mode");
+			button.setText(R.string.leave_offline);
 		}
 
 		logOut(root);

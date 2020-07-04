@@ -5,13 +5,13 @@ import com.example.pma.ereader.model.item.Item;
 import com.example.pma.ereader.network.ItemApi;
 import com.example.pma.ereader.network.NetworkClient;
 import com.example.pma.ereader.network.ServerItem;
+import com.example.pma.ereader.utility.TokenUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.io.FileUtils;
 
 import android.annotation.SuppressLint;
 import android.os.AsyncTask;
@@ -80,12 +80,9 @@ public class BookstoreRepository {
 						@Override
 						protected Void doInBackground(final Void... voids) {
 							try {
-								final File filesDir = MyApplication.getAppContext().getFilesDir();
-								File file = new File(filesDir, title.concat(".epub"));
-								FileOutputStream fileOutputStream = new FileOutputStream(file);
-								final byte[] bytes = response.body().bytes();
-								IOUtils.write(bytes, fileOutputStream);
-								Thread.sleep(2000);
+								final String path = MyApplication.getAppContext().getFilesDir().getPath() + "/" + TokenUtils.getUsernameFromToken().hashCode();
+								FileUtils.writeByteArrayToFile(new File(path, title.concat(".epub")), response.body().bytes());
+								Thread.sleep(1000);
 								bookstoreCallback.onDownloadSuccess();
 							} catch (Exception ex) {
 								Log.e("", "Error downloading file", ex);

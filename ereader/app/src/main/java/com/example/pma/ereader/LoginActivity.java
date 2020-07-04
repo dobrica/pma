@@ -136,7 +136,7 @@ public class LoginActivity extends AppCompatActivity {
 				if (offlineCheckbox.isChecked()) {
 					final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
 					SharedPreferences.Editor editor = sharedPref.edit();
-					editor.putString("TOKEN", "OFFLINE");
+					editor.putString("TOKEN", "OFFLINE " + usernameEditText.getText().toString());
 					editor.apply();
 					setResult(Activity.RESULT_OK);
 					Intent intent = new Intent(LoginActivity.this, MainActivity.class);

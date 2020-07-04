@@ -1,15 +1,10 @@
 package com.example.pma.ereader.utility;
 
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.FilenameFilter;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
-
-import org.apache.commons.io.FileUtils;
 
 import android.content.Context;
 import android.util.Log;
@@ -17,11 +12,11 @@ import android.util.Log;
 public class FileUtility {
 
 	private static final String FILENAME_PATTERN = "[^a-zA-Z0-9,_-]";
-	public static final String EXTENSTION = ".epub";
+	private static final String EXTENSTION = ".epub";
 
 	public static List<File> getLocalEpubFiles(Context context) {
 		List<File> files = new ArrayList<>();
-		String[] paths = context.getFilesDir().list();
+		String[] paths = getUserDirectory(context).list();
 
 		for (String fileName : Objects.requireNonNull(paths)) {
 			if (fileName.endsWith(EXTENSTION)) {
@@ -55,7 +50,7 @@ public class FileUtility {
 	}
 
 	private static File getDownloadedFile(Context context, String fileName) {
-		final File[] files = context.getFilesDir().listFiles();
+		final File[] files = getUserDirectory(context).listFiles();
 		if (files != null) {
 			for (File f : files) {
 				if (f.getPath().contains(fileName)) {
@@ -64,6 +59,10 @@ public class FileUtility {
 			}
 		}
 		return null;
+	}
+
+	private static File getUserDirectory(final Context context) {
+		return new File(context.getFilesDir().getPath() + "/" + TokenUtils.getUsernameFromToken().hashCode());
 	}
 
 }

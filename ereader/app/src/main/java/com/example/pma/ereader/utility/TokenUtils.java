@@ -8,10 +8,12 @@ import android.preference.PreferenceManager;
 public class TokenUtils {
 
 	public static String getUsernameFromToken() {
-		final String token = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext())
-			.getString("TOKEN", "")
-			.replace("Bearer ", "");
-		return new JWT(token).getSubject();
+
+		final String token = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext()).getString("TOKEN", "");
+		if(token.contains("Bearer ")) {
+			return new JWT(token.replace("Bearer ", "")).getSubject();
+		}
+		return token.replace("OFFLINE ", "");
 	}
 
 }

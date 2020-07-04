@@ -59,4 +59,5 @@
     <string name="offline_text">Offline</string>
     <string name="font">Font</string>
     <string name="brightness">Brightness</string>
+    <string name="leave_offline">Leave offline mode</string>
 </resources>
