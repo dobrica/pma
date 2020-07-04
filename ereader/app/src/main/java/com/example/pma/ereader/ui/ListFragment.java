@@ -117,20 +117,38 @@ public abstract class ListFragment extends Fragment {
 			if (!(viewModel instanceof CollectionFragmentViewModel)) {
 				toReadButton.setVisibility(View.INVISIBLE);
 				haveReadButton.setVisibility(View.INVISIBLE);
-				removeButton.setVisibility(View.INVISIBLE);
 			}
 			enableFavorites(favoritesButton, viewHolder);
 			removeButton.setOnClickListener(new OnClickListener() {
 				@SneakyThrows
 				@Override
 				public void onClick(final View v) {
-					final boolean deleted = FileUtility.deleteLocalEpubFile(context, mValues.get(viewHolder.getAdapterPosition()).getTitle());
-					if (deleted) {
-						Thread.sleep(1000);
-						Toast.makeText(context, "File successfully removed from local storage", Toast.LENGTH_SHORT).show();
-						mValues.remove(viewHolder.getAdapterPosition());
-						ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
+					if(viewModel instanceof CollectionFragmentViewModel) {
+						final boolean deleted = FileUtility.deleteLocalEpubFile(context, mValues.get(viewHolder.getAdapterPosition()).getTitle());
+						if (deleted) {
+							Thread.sleep(1000);
+							Toast.makeText(context, "File successfully removed from local storage", Toast.LENGTH_SHORT).show();
+							mValues.remove(viewHolder.getAdapterPosition());
+							ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
+						}
 					}
+					if(viewModel instanceof FavoritesFragmentViewModel) {
+						final FavoritesRepository favoritesRepository = FavoritesRepository.getInstance();
+						favoritesRepository.removeFavorite(mValues.get(viewHolder.getAdapterPosition()).getTitle(), new FavoritesCallback() {
+							@Override
+							public void onGetFavoritesSuccess(final List<Item> items) {
+								//ignore
+							}
+
+							@Override
+							public void onUpdateSuccess() {
+								mValues.remove(viewHolder.getAdapterPosition());
+								Toast.makeText(context, "Book removed from favorites", Toast.LENGTH_SHORT).show();
+								ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
+							}
+						});
+					}
+
 				}
 			});
 			return viewHolder;
@@ -156,7 +174,7 @@ public abstract class ListFragment extends Fragment {
 			return mValues.size();
 		}
 
-		public void enableFavorites(final View favoriteButton, final ViewHolder viewHolder) {
+		void enableFavorites(final View favoriteButton, final ViewHolder viewHolder) {
 			final FavoritesRepository favoritesRepository = FavoritesRepository.getInstance();
 			favoriteButton.setOnClickListener(new OnClickListener() {
 				@Override
@@ -168,7 +186,7 @@ public abstract class ListFragment extends Fragment {
 						}
 
 						@Override
-						public void onAddSuccess() {
+						public void onUpdateSuccess() {
 							Toast.makeText(context, "Book added to favorites", Toast.LENGTH_SHORT).show();
 						}
 					});

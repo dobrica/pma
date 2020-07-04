@@ -30,7 +30,7 @@ public class FavoritesFragmentViewModel extends ListFragmentViewModel {
 			}
 
 			@Override
-			public void onAddSuccess() {
+			public void onUpdateSuccess() {
 				//ignore
 			}
 		});

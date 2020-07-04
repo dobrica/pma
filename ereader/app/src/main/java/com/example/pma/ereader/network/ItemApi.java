@@ -28,4 +28,7 @@ public interface ItemApi {
 	@POST("/users/favorites/add")
 	Call<Void> addToFavorites(@Header("Authorization") final String token, @Body final UserItem userItem);
 
+	@POST("/users/favorites/remove")
+	Call<Void> removeFavorite(@Header("Authorization") final String token, @Body final UserItem userItem);
+
 }

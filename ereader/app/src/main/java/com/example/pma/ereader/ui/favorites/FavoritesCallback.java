@@ -8,6 +8,6 @@ public interface FavoritesCallback {
 
 	void onGetFavoritesSuccess(List<Item> items);
 
-	void onAddSuccess();
+	void onUpdateSuccess();
 
 }

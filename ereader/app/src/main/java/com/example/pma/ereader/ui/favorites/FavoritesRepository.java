@@ -82,7 +82,7 @@ public class FavoritesRepository {
 			@Override
 			public void onResponse(final Call<Void> call, final Response<Void> response) {
 				if (response.isSuccessful()) {
-					favoritesCallback.onAddSuccess();
+					favoritesCallback.onUpdateSuccess();
 				}
 			}
 
@@ -91,7 +91,42 @@ public class FavoritesRepository {
 
 			}
 		});
+	}
 
+
+	public void removeFavorite(final String title, final FavoritesCallback favoritesCallback) {
+		final SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+		final String token = defaultSharedPreferences.getString("TOKEN", "");
+		User userInfo;
+		try {
+			Gson gson = new Gson();
+			userInfo = gson.fromJson(defaultSharedPreferences.getString("USER_INFO", ""), User.class);
+		} catch (JsonSyntaxException e) {
+			return;
+		}
+		if(userInfo == null) {
+			return;
+		}
+		Retrofit retrofit = NetworkClient.getRetrofitClient();
+		ItemApi itemApi = retrofit.create(ItemApi.class);
+		Call<Void> call = itemApi.removeFavorite(token, UserItem.builder()
+			.userId(userInfo.getId())
+			.itemTitle(title.replaceAll("[^a-zA-Z0-9,_-]", ""))
+			.build());
+
+		call.enqueue(new Callback<Void>() {
+			@Override
+			public void onResponse(final Call<Void> call, final Response<Void> response) {
+				if (response.isSuccessful()) {
+					favoritesCallback.onUpdateSuccess();
+				}
+			}
+
+			@Override
+			public void onFailure(final Call<Void> call, final Throwable t) {
+
+			}
+		});
 	}
 
 }
