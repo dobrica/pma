@@ -32,10 +32,20 @@ public class CollectionsRepository {
 	}
 
 	public void findAll(final CollectionType collectionType, final CollectionCallback collectionCallback) {
-		final String token = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext()).getString("TOKEN", "");
+		final SharedPreferences defaultSharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+		final String token = defaultSharedPreferences.getString("TOKEN", "");
 		final List<Item> items = new ArrayList<>();
-		Call<List<ServerItem>> call = determineFindEndpoint(collectionType, token, 1L);
-
+		User userInfo;
+		try {
+			Gson gson = new Gson();
+			userInfo = gson.fromJson(defaultSharedPreferences.getString("USER_INFO", ""), User.class);
+		} catch (JsonSyntaxException e) {
+			return;
+		}
+		if (userInfo == null) {
+			return;
+		}
+		Call<List<ServerItem>> call = determineFindEndpoint(collectionType, token, userInfo.getId());
 		call.enqueue(new Callback<List<ServerItem>>() {
 			@Override
 			public void onResponse(final Call<List<ServerItem>> call, final Response<List<ServerItem>> response) {
