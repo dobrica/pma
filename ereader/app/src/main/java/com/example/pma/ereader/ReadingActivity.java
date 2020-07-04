@@ -81,11 +81,8 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
             try {
                 reader = new Reader();
 
-                // Setting optionals once per file is enough.
-//                int contentPerSectionSize = 1000;
-//                reader.setMaxContentPerSection(contentPerSectionSize);
                 reader.setCssStatus(CssStatus.OMIT); // for web view CssStatus.INCLUDE
-                reader.setIsIncludingTextContent(true);
+                reader.setIsIncludingTextContent(false);
                 reader.setIsOmittingTitleTag(true);
 
                 // This method must be called before readSection.
@@ -136,23 +133,20 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         isSkippedToPage = false;
 
         if (bookSection != null) {
-            return setFragmentView(false, bookSection.getSectionContent(), bookSection.getMediaType(), "UTF-8", position); // isContentStyled = true for web view
+            return setFragmentView(bookSection.getSectionContent(), position);
         }
 
         return null;
     }
 
-    private View setFragmentView(boolean isContentStyled, String data, String mimeType, String encoding, int position) {
-
-        int maxContent = (int) (100 * (0.175 * 20));
-
+    private View setFragmentView(String data, int position) {
+        int maxContent = (int) ((pxScreenWidth/10) * (0.15 * textSize));
         reader.setMaxContentPerSection(maxContent);
 
         FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
 
         LinearLayout linearLayout = new LinearLayout(ReadingActivity.this);
         linearLayout.setLayoutParams(layoutParams);
-
 
         TextView textView = new TextView(ReadingActivity.this);
         views.add(textView);
