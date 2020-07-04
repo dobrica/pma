@@ -18,7 +18,11 @@ public class FileUtility {
 		List<File> files = new ArrayList<>();
 		String[] paths = getUserDirectory(context).list();
 
-		for (String fileName : Objects.requireNonNull(paths)) {
+		if (paths == null) {
+			return files;
+		}
+
+		for (String fileName : paths) {
 			if (fileName.endsWith(EXTENSTION)) {
 				File f = getDownloadedFile(context, fileName);
 				if (f != null) {
