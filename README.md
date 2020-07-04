@@ -10,17 +10,17 @@ sinhronizaciju podešavanja i kolekcija (favourites, to read, have read). U offl
 korisnik može da pregleda i čita knjige koje je prethodno preuzeo.
 
 ## Funkcionalnosti
-Registracija
-Login online/offline
-Pregled naloga
-Podešavanja fonta i osvetljenja
-Preuzimanje epub fajlova sa servisa knjižare
-Pregled knjiga po kolekciji
-Smeštanje knjiga u kolekcije
-Sinhronizacija kolekcija i podešavanja korisnika
-Čitanje epub fajlova
-Pregled sadržaja
-Automatsko praćenje progresa čitanja
+*Registracija
+*Login online/offline
+*Pregled naloga
+*Podešavanja fonta i osvetljenja
+*Preuzimanje epub fajlova sa servisa knjižare
+*Pregled knjiga po kolekciji
+*Smeštanje knjiga u kolekcije
+*Sinhronizacija kolekcija i podešavanja korisnika
+*Čitanje epub fajlova
+*Pregled sadržaja
+*Automatsko praćenje progresa čitanja
 
 ## Video
 https://www.youtube.com/watch?v=CCbS0bV9w9E
