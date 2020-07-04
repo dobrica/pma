@@ -1,11 +1,15 @@
 package com.example.pma.ereader.model.login;
 
+import com.example.pma.ereader.MyApplication;
 import com.example.pma.ereader.network.NetworkClient;
 import com.example.pma.ereader.network.User;
 import com.example.pma.ereader.network.UserApi;
+import com.google.gson.Gson;
 
 import java.util.List;
 
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -35,7 +39,9 @@ public class LoginRepository {
 				if (response.isSuccessful()) {
 					final List<String> authHeaders = response.headers().values("Authorization");
 					if (!authHeaders.isEmpty()) {
-						loginCallback.onSuccess(new LoggedInUser(username, username, authHeaders.get(0)));
+						final String token = authHeaders.get(0);
+						getUserInfo(userApi, token, username);
+						loginCallback.onSuccess(new LoggedInUser(username, username, token));
 					} else {
 						loginCallback.onSuccess(new LoggedInUser(username, username, null));
 					}
@@ -51,4 +57,29 @@ public class LoginRepository {
 			}
 		});
 	}
+
+	private void getUserInfo(final UserApi userApi, final String token, final String username) {
+		Call<User> userInfoCall = userApi.getUserInfo(token, username);
+		userInfoCall.enqueue(new Callback<User>() {
+			@Override
+			public void onResponse(final Call<User> call, final Response<User> response) {
+				if (response.isSuccessful() && response.body() != null) {
+					final User user = response.body();
+					Gson gson = new Gson();
+					final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(MyApplication.getAppContext());
+					SharedPreferences.Editor editor = sharedPref.edit();
+					editor.putString("USER_INFO", gson.toJson(user));
+					editor.apply();
+				}
+			}
+
+			@Override
+			public void onFailure(final Call<User> call, final Throwable t) {
+
+			}
+		});
+
+	}
 }
+
+

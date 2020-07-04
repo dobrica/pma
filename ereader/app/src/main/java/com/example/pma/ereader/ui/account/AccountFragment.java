@@ -89,6 +89,7 @@ public class AccountFragment extends Fragment {
 				final SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(getActivity());
 				SharedPreferences.Editor editor = sharedPref.edit();
 				editor.remove("TOKEN");
+				editor.remove("USER_INFO");
 				editor.apply();
 				Toast.makeText(getContext(), "Successfully logged out", Toast.LENGTH_LONG).show();
 				Intent intent = new Intent(getActivity(), LoginActivity.class);

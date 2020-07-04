@@ -2,6 +2,7 @@ package com.example.pma.ereader.ui.collection;
 
 import com.example.pma.ereader.model.item.Item;
 import com.example.pma.ereader.model.item.ItemsRepository;
+import com.example.pma.ereader.ui.ListFragment.SimpleItemRecyclerViewAdapter;
 import com.example.pma.ereader.ui.ListFragmentViewModel;
 import com.example.pma.ereader.utility.FileUtility;
 import com.github.mertakdut.Reader;
@@ -21,11 +22,9 @@ public class CollectionFragmentViewModel extends ListFragmentViewModel {
         super();
         context = mContext;
         items = new ArrayList<>();
-
-        getItems();
     }
 
-    public List<Item> getItems(){
+    public List<Item> getItems(final SimpleItemRecyclerViewAdapter adapter){
         items.clear();
         Reader reader = new Reader();
         List<File> files = FileUtility.getLocalEpubFiles(context);

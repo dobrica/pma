@@ -1,5 +1,16 @@
 package com.example.pma.ereader.ui;
 
+import com.example.pma.ereader.ItemDetailActivity;
+import com.example.pma.ereader.R;
+import com.example.pma.ereader.model.item.Item;
+import com.example.pma.ereader.ui.collection.CollectionFragmentViewModel;
+import com.example.pma.ereader.ui.favorites.FavoritesCallback;
+import com.example.pma.ereader.ui.favorites.FavoritesFragmentViewModel;
+import com.example.pma.ereader.ui.favorites.FavoritesRepository;
+import com.example.pma.ereader.utility.FileUtility;
+
+import java.util.List;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,20 +20,12 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.recyclerview.widget.RecyclerView;
 import lombok.SneakyThrows;
-
-import com.example.pma.ereader.ItemDetailActivity;
-import com.example.pma.ereader.R;
-import com.example.pma.ereader.model.item.Item;
-import com.example.pma.ereader.utility.FileUtility;
-
-import java.util.List;
 
 public abstract class ListFragment extends Fragment {
 	/**
@@ -52,16 +55,19 @@ public abstract class ListFragment extends Fragment {
 	}
 
 	private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-		recyclerView.setAdapter(new ListFragment.SimpleItemRecyclerViewAdapter(this, viewModel.getItems(), mTwoPane, getContext()));
+		final SimpleItemRecyclerViewAdapter adapter = new SimpleItemRecyclerViewAdapter(this, viewModel, mTwoPane, getContext());
+		recyclerView.setAdapter(adapter);
 	}
 
 	public static class SimpleItemRecyclerViewAdapter
 		extends RecyclerView.Adapter<SimpleItemRecyclerViewAdapter.ViewHolder> {
 
 		private final FragmentManager mFragmentManager;
+		private final ListFragmentViewModel viewModel;
 		private final List<Item> mValues;
 		private final boolean mTwoPane;
 		private final Context context;
+
 		private final View.OnClickListener mOnClickListener = new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
@@ -84,8 +90,9 @@ public abstract class ListFragment extends Fragment {
 			}
 		};
 
-		SimpleItemRecyclerViewAdapter(ListFragment fragment, List<Item> items, boolean twoPane, final Context context) {
-			mValues = items;
+		SimpleItemRecyclerViewAdapter(ListFragment fragment, final ListFragmentViewModel viewModel, boolean twoPane, final Context context) {
+			this.viewModel = viewModel;
+			mValues = viewModel.getItems(this);
 			mTwoPane = twoPane;
 			mFragmentManager = fragment.getParentFragmentManager();
 			this.context = context;
@@ -97,6 +104,22 @@ public abstract class ListFragment extends Fragment {
 				.inflate(R.layout.item_list_content, parent, false);
 			final ViewHolder viewHolder = new ViewHolder(view);
 			final View removeButton = view.findViewById(R.id.remove);
+			final View favoritesButton = view.findViewById(R.id.favorites);
+			final View toReadButton = view.findViewById(R.id.toRead);
+			final View haveReadButton = view.findViewById(R.id.haveRead);
+			if (!(viewModel instanceof CollectionFragmentViewModel)) {
+				if (viewModel instanceof FavoritesFragmentViewModel) {
+					favoritesButton.setEnabled(false);
+				} else {
+					favoritesButton.setVisibility(View.INVISIBLE);
+				}
+			}
+			if (!(viewModel instanceof CollectionFragmentViewModel)) {
+				toReadButton.setVisibility(View.INVISIBLE);
+				haveReadButton.setVisibility(View.INVISIBLE);
+				removeButton.setVisibility(View.INVISIBLE);
+			}
+			enableFavorites(favoritesButton, viewHolder);
 			removeButton.setOnClickListener(new OnClickListener() {
 				@SneakyThrows
 				@Override
@@ -123,12 +146,34 @@ public abstract class ListFragment extends Fragment {
 			}
 			holder.imageView.setImageBitmap(mValues.get(position).getCoverImageBitmap());
 			holder.itemView.setTag(mValues.get(position));
-			holder.itemView.setOnClickListener(mOnClickListener);
+			if (viewModel instanceof CollectionFragmentViewModel) {
+				holder.itemView.setOnClickListener(mOnClickListener);
+			}
 		}
 
 		@Override
 		public int getItemCount() {
 			return mValues.size();
+		}
+
+		public void enableFavorites(final View favoriteButton, final ViewHolder viewHolder) {
+			final FavoritesRepository favoritesRepository = FavoritesRepository.getInstance();
+			favoriteButton.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(final View v) {
+					favoritesRepository.addToFavorites(mValues.get(viewHolder.getAdapterPosition()).getTitle(), new FavoritesCallback() {
+						@Override
+						public void onGetFavoritesSuccess(final List<Item> items) {
+							//
+						}
+
+						@Override
+						public void onAddSuccess() {
+							Toast.makeText(context, "Book added to favorites", Toast.LENGTH_SHORT).show();
+						}
+					});
+				}
+			});
 		}
 
 		class ViewHolder extends RecyclerView.ViewHolder {
