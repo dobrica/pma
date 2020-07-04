@@ -157,9 +157,9 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         textView.setTextColor(ContextCompat.getColor(this, R.color.lightText)); // set page text color
         textView.setTextSize(textSize);
 
-        int page = position + 1;
+        String page = position > 0 ? String.valueOf(position) : "";
 
-        CharSequence sequence = Html.fromHtml(position + data, source -> {
+        CharSequence sequence = Html.fromHtml(page + data, source -> {
             String imageAsStr = source.substring(source.indexOf(";base64,") + 8);
             byte[] imageAsBytes = Base64.decode(imageAsStr, Base64.DEFAULT);
             Bitmap imageAsBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
