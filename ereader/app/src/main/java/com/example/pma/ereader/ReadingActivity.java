@@ -45,7 +45,6 @@ import java.util.List;
 public class ReadingActivity extends Fullscreen implements PageFragment.OnFragmentReadyListener, SettingsChanged {
 
     private View options;
-    private FrameLayout bookmark;
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private Reader reader;
     private int pageCount = Integer.MAX_VALUE;
@@ -60,7 +59,6 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reading);
         mContentView = findViewById(R.id.reading_layout);
-        bookmark = findViewById(R.id.bookmark);
         options = findViewById(R.id.options_container);
 
         hide();
@@ -193,10 +191,8 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
             if (mVisible) {
                 slideBottomViewBackToScreen(options);
-                slideTopViewBackToScreen(bookmark);
             } else {
                 slideBottomViewOffScreen(options);
-                slideTopViewOffScreen(bookmark);
             }
         });
 
@@ -230,7 +226,6 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
     public void onWindowFocusChanged(boolean hasFocus) {
         super.onWindowFocusChanged(hasFocus);
         slideBottomViewOffScreen(options);
-        slideTopViewOffScreen(bookmark);
     }
 
     @Override
