@@ -113,7 +113,12 @@ public abstract class ListFragment extends Fragment {
 
 		@Override
 		public void onBindViewHolder(final ListFragment.SimpleItemRecyclerViewAdapter.ViewHolder holder, int position) {
-			holder.mContentView.setText(mValues.get(position).getTitle());
+			final String title = mValues.get(position).getTitle();
+			if (title.length() > 60) {
+				holder.mContentView.setText(title.substring(0, 60) + "...");
+			} else {
+				holder.mContentView.setText(title);
+			}
 			holder.imageView.setImageBitmap(mValues.get(position).getCoverImageBitmap());
 			holder.itemView.setTag(mValues.get(position));
 			holder.itemView.setOnClickListener(mOnClickListener);
