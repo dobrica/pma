@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
@@ -103,6 +104,7 @@ public abstract class ListFragment extends Fragment {
 					final boolean deleted = FileUtility.deleteLocalEpubFile(context, mValues.get(viewHolder.getAdapterPosition()).getTitle());
 					if (deleted) {
 						Thread.sleep(1000);
+						Toast.makeText(context, "File successfully removed from local storage", Toast.LENGTH_SHORT).show();
 						mValues.remove(viewHolder.getAdapterPosition());
 						ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
 					}

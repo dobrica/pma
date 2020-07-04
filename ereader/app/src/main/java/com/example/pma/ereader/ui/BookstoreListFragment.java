@@ -21,6 +21,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
@@ -78,7 +79,10 @@ public class BookstoreListFragment extends Fragment {
 						public void onDownloadSuccess() {
 							if (View.VISIBLE == downloadProgressBar.getVisibility()) {
 								if (context.getClass().equals(MainActivity.class)) {
-									((MainActivity) context).runOnUiThread(() -> downloadProgressBar.setVisibility(View.GONE));
+									((MainActivity) context).runOnUiThread(() -> {
+										Toast.makeText(context, "File successfully downloaded to local storage", Toast.LENGTH_SHORT).show();
+										downloadProgressBar.setVisibility(View.GONE);
+									});
 								}
 							}
 						}
