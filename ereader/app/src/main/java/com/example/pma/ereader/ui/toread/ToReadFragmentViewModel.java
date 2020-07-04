@@ -1,4 +1,4 @@
-package com.example.pma.ereader.ui.favorites;
+package com.example.pma.ereader.ui.toread;
 
 import com.example.pma.ereader.model.item.Item;
 import com.example.pma.ereader.ui.ListFragment.SimpleItemRecyclerViewAdapter;
@@ -12,11 +12,11 @@ import java.util.List;
 
 import android.content.Context;
 
-public class FavoritesFragmentViewModel extends ListFragmentViewModel {
+public class ToReadFragmentViewModel extends ListFragmentViewModel {
 	private List<Item> items;
 	private Context context;
 
-	FavoritesFragmentViewModel(Context mContext) {
+	ToReadFragmentViewModel(Context mContext) {
 		super();
 		context = mContext;
 		items = new ArrayList<>();
@@ -25,10 +25,10 @@ public class FavoritesFragmentViewModel extends ListFragmentViewModel {
 	public List<Item> getItems(final SimpleItemRecyclerViewAdapter adapter) {
 		items.clear();
 		final CollectionsRepository collectionsRepository = CollectionsRepository.getInstance();
-		collectionsRepository.findAll(CollectionType.FAVORITE, new CollectionCallback() {
+		collectionsRepository.findAll(CollectionType.TO_READ, new CollectionCallback() {
 			@Override
-			public void onGetSuccess(final List<Item> favorites) {
-				items.addAll(favorites);
+			public void onGetSuccess(final List<Item> toReadItems) {
+				items.addAll(toReadItems);
 				adapter.notifyDataSetChanged();
 			}
 

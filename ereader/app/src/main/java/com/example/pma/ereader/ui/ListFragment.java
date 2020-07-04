@@ -3,10 +3,13 @@ package com.example.pma.ereader.ui;
 import com.example.pma.ereader.ItemDetailActivity;
 import com.example.pma.ereader.R;
 import com.example.pma.ereader.model.item.Item;
+import com.example.pma.ereader.ui.collection.CollectionCallback;
 import com.example.pma.ereader.ui.collection.CollectionFragmentViewModel;
-import com.example.pma.ereader.ui.favorites.FavoritesCallback;
+import com.example.pma.ereader.ui.collection.CollectionType;
+import com.example.pma.ereader.ui.collection.CollectionsRepository;
 import com.example.pma.ereader.ui.favorites.FavoritesFragmentViewModel;
-import com.example.pma.ereader.ui.favorites.FavoritesRepository;
+import com.example.pma.ereader.ui.haveread.HaveReadFragmentViewModel;
+import com.example.pma.ereader.ui.toread.ToReadFragmentViewModel;
 import com.example.pma.ereader.utility.FileUtility;
 
 import java.util.List;
@@ -113,17 +116,25 @@ public abstract class ListFragment extends Fragment {
 				} else {
 					favoritesButton.setVisibility(View.INVISIBLE);
 				}
-			}
-			if (!(viewModel instanceof CollectionFragmentViewModel)) {
-				toReadButton.setVisibility(View.INVISIBLE);
-				haveReadButton.setVisibility(View.INVISIBLE);
+				if (viewModel instanceof ToReadFragmentViewModel) {
+					toReadButton.setEnabled(false);
+				} else {
+					toReadButton.setVisibility(View.INVISIBLE);
+				}
+				if (viewModel instanceof HaveReadFragmentViewModel) {
+					haveReadButton.setEnabled(false);
+				} else {
+					haveReadButton.setVisibility(View.INVISIBLE);
+				}
 			}
 			enableFavorites(favoritesButton, viewHolder);
+			enableToRead(toReadButton, viewHolder);
+			enableHaveRead(haveReadButton, viewHolder);
 			removeButton.setOnClickListener(new OnClickListener() {
 				@SneakyThrows
 				@Override
 				public void onClick(final View v) {
-					if(viewModel instanceof CollectionFragmentViewModel) {
+					if (viewModel instanceof CollectionFragmentViewModel) {
 						final boolean deleted = FileUtility.deleteLocalEpubFile(context, mValues.get(viewHolder.getAdapterPosition()).getTitle());
 						if (deleted) {
 							Thread.sleep(1000);
@@ -131,24 +142,23 @@ public abstract class ListFragment extends Fragment {
 							mValues.remove(viewHolder.getAdapterPosition());
 							ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
 						}
-					}
-					if(viewModel instanceof FavoritesFragmentViewModel) {
-						final FavoritesRepository favoritesRepository = FavoritesRepository.getInstance();
-						favoritesRepository.removeFavorite(mValues.get(viewHolder.getAdapterPosition()).getTitle(), new FavoritesCallback() {
-							@Override
-							public void onGetFavoritesSuccess(final List<Item> items) {
-								//ignore
-							}
+					} else {
+						final CollectionType collectionType = determineCollectionType(viewModel);
+						CollectionsRepository.getInstance()
+							.remove(collectionType, mValues.get(viewHolder.getAdapterPosition()).getTitle(), new CollectionCallback() {
+								@Override
+								public void onGetSuccess(final List<Item> items) {
+									//ignore
+								}
 
-							@Override
-							public void onUpdateSuccess() {
-								mValues.remove(viewHolder.getAdapterPosition());
-								Toast.makeText(context, "Book removed from favorites", Toast.LENGTH_SHORT).show();
-								ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
-							}
-						});
+								@Override
+								public void onUpdateSuccess() {
+									mValues.remove(viewHolder.getAdapterPosition());
+									Toast.makeText(context, String.format("Book removed from %s", collectionType.name()), Toast.LENGTH_SHORT).show();
+									ListFragment.SimpleItemRecyclerViewAdapter.super.notifyDataSetChanged();
+								}
+							});
 					}
-
 				}
 			});
 			return viewHolder;
@@ -175,23 +185,64 @@ public abstract class ListFragment extends Fragment {
 		}
 
 		void enableFavorites(final View favoriteButton, final ViewHolder viewHolder) {
-			final FavoritesRepository favoritesRepository = FavoritesRepository.getInstance();
-			favoriteButton.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(final View v) {
-					favoritesRepository.addToFavorites(mValues.get(viewHolder.getAdapterPosition()).getTitle(), new FavoritesCallback() {
-						@Override
-						public void onGetFavoritesSuccess(final List<Item> items) {
-							//
-						}
+			final CollectionsRepository collectionsRepository = CollectionsRepository.getInstance();
+			favoriteButton.setOnClickListener(
+				v -> collectionsRepository.add(CollectionType.FAVORITE, mValues.get(viewHolder.getAdapterPosition()).getTitle(), new CollectionCallback() {
+					@Override
+					public void onGetSuccess(final List<Item> items) {
+						//
+					}
 
-						@Override
-						public void onUpdateSuccess() {
-							Toast.makeText(context, "Book added to favorites", Toast.LENGTH_SHORT).show();
-						}
-					});
-				}
-			});
+					@Override
+					public void onUpdateSuccess() {
+						Toast.makeText(context, "Book added to FAVORITES collection", Toast.LENGTH_SHORT).show();
+					}
+				}));
+		}
+
+		void enableToRead(final View toReadButton, final ViewHolder viewHolder) {
+			final CollectionsRepository collectionsRepository = CollectionsRepository.getInstance();
+			toReadButton.setOnClickListener(
+				v -> collectionsRepository.add(CollectionType.TO_READ, mValues.get(viewHolder.getAdapterPosition()).getTitle(), new CollectionCallback() {
+					@Override
+					public void onGetSuccess(final List<Item> items) {
+						//
+					}
+
+					@Override
+					public void onUpdateSuccess() {
+						Toast.makeText(context, "Book added to TO READ collection", Toast.LENGTH_SHORT).show();
+					}
+				}));
+		}
+
+		void enableHaveRead(final View haveReadButton, final ViewHolder viewHolder) {
+			final CollectionsRepository collectionsRepository = CollectionsRepository.getInstance();
+			haveReadButton.setOnClickListener(
+				v -> collectionsRepository.add(CollectionType.HAVE_READ, mValues.get(viewHolder.getAdapterPosition()).getTitle(), new CollectionCallback() {
+					@Override
+					public void onGetSuccess(final List<Item> items) {
+						//
+					}
+
+					@Override
+					public void onUpdateSuccess() {
+						Toast.makeText(context, "Book added to HAVE READ collection", Toast.LENGTH_SHORT).show();
+					}
+				}));
+		}
+
+		CollectionType determineCollectionType(final ListFragmentViewModel viewModel) {
+			if (viewModel instanceof FavoritesFragmentViewModel) {
+				return CollectionType.FAVORITE;
+			}
+			if (viewModel instanceof ToReadFragmentViewModel) {
+				return CollectionType.TO_READ;
+			}
+			if (viewModel instanceof HaveReadFragmentViewModel) {
+				return CollectionType.HAVE_READ;
+			}
+			throw new IllegalArgumentException("Collection type not supported!");
 		}
 
 		class ViewHolder extends RecyclerView.ViewHolder {

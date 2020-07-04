@@ -40,8 +40,7 @@ public class LoginRepository {
 					final List<String> authHeaders = response.headers().values("Authorization");
 					if (!authHeaders.isEmpty()) {
 						final String token = authHeaders.get(0);
-						getUserInfo(userApi, token, username);
-						loginCallback.onSuccess(new LoggedInUser(username, username, token));
+						getUserInfo(userApi, token, username, loginCallback);
 					} else {
 						loginCallback.onSuccess(new LoggedInUser(username, username, null));
 					}
@@ -58,7 +57,7 @@ public class LoginRepository {
 		});
 	}
 
-	private void getUserInfo(final UserApi userApi, final String token, final String username) {
+	private void getUserInfo(final UserApi userApi, final String token, final String username, final LoginCallback loginCallback) {
 		Call<User> userInfoCall = userApi.getUserInfo(token, username);
 		userInfoCall.enqueue(new Callback<User>() {
 			@Override
@@ -70,12 +69,15 @@ public class LoginRepository {
 					SharedPreferences.Editor editor = sharedPref.edit();
 					editor.putString("USER_INFO", gson.toJson(user));
 					editor.apply();
+					loginCallback.onSuccess(new LoggedInUser(username, username, token));
+				} else {
+					loginCallback.onSuccess(new LoggedInUser(username, username, null));
 				}
 			}
 
 			@Override
 			public void onFailure(final Call<User> call, final Throwable t) {
-
+				loginCallback.onSuccess(new LoggedInUser(username, username, null));
 			}
 		});
 
