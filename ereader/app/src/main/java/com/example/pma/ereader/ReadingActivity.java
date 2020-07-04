@@ -53,7 +53,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
     private boolean isSkippedToPage = false;
     private final List<TextView> views = new ArrayList<>();
     private int textSize = 20;
-    private int lastSavedPage;
+    private ViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,7 +72,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
         pxScreenHeight = getResources().getDisplayMetrics().heightPixels;
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-        ViewPager mViewPager = findViewById(R.id.fullscreen_content);
+        mViewPager = findViewById(R.id.fullscreen_content);
         mViewPager.setOffscreenPageLimit(0);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
@@ -92,7 +92,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
                 }
 
                 if (reader.isSavedProgressFound()) {
-                    lastSavedPage = reader.loadProgress();
+                    int lastSavedPage = reader.loadProgress();
                     mViewPager.setCurrentItem(lastSavedPage);
                 }
 
@@ -142,8 +142,6 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
     private View setFragmentView(String data, int position) {
 
-        lastSavedPage = position;
-
         int maxContent = (int) ((pxScreenWidth/10) * (0.15 * textSize));
         reader.setMaxContentPerSection(maxContent);
 
@@ -161,7 +159,7 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
 
         int page = position + 1;
 
-        CharSequence sequence = Html.fromHtml(page + data, source -> {
+        CharSequence sequence = Html.fromHtml(position + data, source -> {
             String imageAsStr = source.substring(source.indexOf(";base64,") + 8);
             byte[] imageAsBytes = Base64.decode(imageAsStr, Base64.DEFAULT);
             Bitmap imageAsBitmap = BitmapFactory.decodeByteArray(imageAsBytes, 0, imageAsBytes.length);
@@ -238,10 +236,8 @@ public class ReadingActivity extends Fullscreen implements PageFragment.OnFragme
     protected void onStop() {
         super.onStop();
         try {
-            reader.saveProgress(lastSavedPage);
-        } catch (ReadingException e) {
-            e.printStackTrace();
-        } catch (OutOfPagesException e) {
+            reader.saveProgress(mViewPager.getCurrentItem());
+        } catch (ReadingException | OutOfPagesException e) {
             e.printStackTrace();
         }
     }
